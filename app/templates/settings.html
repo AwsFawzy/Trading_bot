@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="mb-4"><i class="fas fa-cog me-2"></i> إعدادات البوت</h2>
+                
+                <form method="POST" action="{{ url_for('save_settings') }}">
+                    <!-- إعدادات العامة -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary">
+                            <h5 class="mb-0">الإعدادات العامة</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <label for="base_currency" class="col-md-3 col-form-label">العملة الأساسية:</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="base_currency" name="base_currency" value="{{ config.BASE_CURRENCY }}" readonly>
+                                    <small class="form-text text-white-50">العملة الأساسية المستخدمة في التداول</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <label for="max_active_trades" class="col-md-3 col-form-label">أقصى عدد للصفقات النشطة:</label>
+                                <div class="col-md-9">
+                                    <input type="number" class="form-control" id="max_active_trades" name="max_active_trades" value="{{ config.MAX_ACTIVE_TRADES }}" min="1" max="10">
+                                    <small class="form-text text-white-50">الحد الأقصى لعدد الصفقات المفتوحة في نفس الوقت</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <label for="total_risk_capital_ratio" class="col-md-3 col-form-label">نسبة رأس المال المخاطر:</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="total_risk_capital_ratio" name="total_risk_capital_ratio" value="{{ config.TOTAL_RISK_CAPITAL_RATIO * 100 }}" min="1" max="100" step="1">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <small class="form-text text-white-50">نسبة رأس المال المخصصة للتداول (من إجمالي الرصيد)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- إعدادات الصفقات -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info">
+                            <h5 class="mb-0">إعدادات الصفقات</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <label for="risk_capital_ratio" class="col-md-3 col-form-label">نسبة المخاطرة لكل صفقة:</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="risk_capital_ratio" name="risk_capital_ratio" value="{{ config.RISK_CAPITAL_RATIO * 100 }}" min="0.1" max="50" step="0.1">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <small class="form-text text-white-50">نسبة رأس المال المخصصة لكل صفقة</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <label for="take_profit" class="col-md-3 col-form-label">نسبة جني الأرباح:</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="take_profit" name="take_profit" value="{{ config.TAKE_PROFIT * 100 }}" min="0.1" max="10" step="0.1">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <small class="form-text text-white-50">نسبة الربح المستهدفة لإغلاق الصفقة</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <label for="stop_loss" class="col-md-3 col-form-label">نسبة وقف الخسارة:</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="stop_loss" name="stop_loss" value="{{ config.STOP_LOSS * 100 }}" min="0.1" max="10" step="0.1">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <small class="form-text text-white-50">نسبة الخسارة المقبولة قبل إغلاق الصفقة</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- إعدادات إدارة المخاطر المتقدمة -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">إدارة المخاطر المتقدمة</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <label for="time_stop_loss_hours" class="col-md-3 col-form-label">وقف الخسارة الزمني:</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="time_stop_loss_hours" name="time_stop_loss_hours" value="{{ config.TIME_STOP_LOSS_HOURS }}" min="1" max="72">
+                                        <span class="input-group-text">ساعة</span>
+                                    </div>
+                                    <small class="form-text text-white-50">إغلاق الصفقة إذا لم تحقق ربحًا خلال هذه الفترة</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <label for="daily_loss_limit" class="col-md-3 col-form-label">حد الخسارة اليومي:</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="daily_loss_limit" name="daily_loss_limit" value="{{ config.DAILY_LOSS_LIMIT * 100 }}" min="0.1" max="10" step="0.1">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <small class="form-text text-white-50">الحد الأقصى للخسارة اليومية قبل إيقاف التداول تلقائيًا</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <label for="monitor_interval" class="col-md-3 col-form-label">فترة تحديث المراقبة:</label>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="monitor_interval" name="monitor_interval" value="{{ config.MONITOR_INTERVAL_SECONDS }}" min="5" max="300" step="5">
+                                        <span class="input-group-text">ثانية</span>
+                                    </div>
+                                    <small class="form-text text-white-50">الفترة الزمنية بين عمليات مراقبة الصفقات</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- إعدادات API -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-secondary">
+                            <h5 class="mb-0">إعدادات واجهة MEXC API</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>تنبيه:</strong> تغيير هذه الإعدادات قد يتطلب إعادة تشغيل البوت.
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="active_exchange" class="form-label">المنصة النشطة:</label>
+                                <div class="col-md-9">
+                                    <select id="active_exchange" name="active_exchange" class="form-control">
+                                        <option value="MEXC" selected>MEXC</option>
+                                    </select>
+                                    <small class="form-text text-white-50">المنصة التي سيتم استخدامها للتداول (MEXC فقط)</small>
+                                </div>
+                            </div>
+                            
+                            <div id="mexc-api-settings">
+                                <h6 class="mb-3">واجهة MEXC</h6>
+                                <div class="row mb-3">
+                                    <label for="api_key" class="col-md-3 col-form-label">مفتاح API:</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" id="api_key" name="api_key" value="{{ api_key_masked }}">
+                                        <small class="form-text text-white-50">مفتاح API الخاص بحسابك في منصة MEXC</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <label for="api_secret" class="col-md-3 col-form-label">سر API:</label>
+                                    <div class="col-md-9">
+                                        <input type="password" class="form-control" id="api_secret" name="api_secret" value="{{ api_secret_masked }}">
+                                        <small class="form-text text-white-50">السر المرتبط بمفتاح API الخاص بك</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- تم إزالة إعدادات OKX حيث أن التطبيق يدعم MEXC فقط حالياً -->
+                            
+                            <h6 class="mb-3 mt-4">إعدادات التلغرام</h6>
+                            <div class="row mb-3">
+                                <label for="telegram_token" class="col-md-3 col-form-label">رمز البوت:</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="telegram_token" name="telegram_token" value="{{ telegram_token_masked }}">
+                                    <small class="form-text text-white-50">رمز بوت التلغرام الخاص بك</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <label for="telegram_chat_id" class="col-md-3 col-form-label">معرف المحادثة:</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="telegram_chat_id" name="telegram_chat_id" value="{{ config.TELEGRAM_CHAT_ID }}">
+                                    <small class="form-text text-white-50">معرف المحادثة أو المجموعة لإرسال الإشعارات</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-9 offset-md-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="enable_notifications" name="enable_notifications" checked>
+                                        <label class="form-check-label" for="enable_notifications">تفعيل إشعارات التلغرام</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save me-2"></i> حفظ الإعدادات
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // تأكد من ظهور إعدادات منصة MEXC دائماً
+    document.getElementById('mexc-api-settings').style.display = 'block';
+</script>
+{% endblock %}

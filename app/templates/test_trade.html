@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}اختبار تنفيذ الصفقات - بوت تداول العملات الرقمية{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">اختبار تنفيذ الصفقات</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">اختبار تنفيذ أمر تداول</h5>
+        </div>
+        <div class="card-body">
+            <p class="alert alert-info">
+                استخدم هذه الصفحة لاختبار تنفيذ أمر تداول حقيقي بكمية صغيرة جدًا للتأكد من عمل واجهة برمجة التطبيقات (API) بشكل صحيح.
+                <br>
+                <strong>ملاحظة هامة:</strong> سيتم تنفيذ أمر شراء ثم بيع فوري للتأكد من عدم ترك أي عملات في المحفظة.
+            </p>
+            
+            <form method="post" action="{{ url_for('test_trade') }}">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="symbol" class="form-label">رمز العملة:</label>
+                        <input type="text" id="symbol" name="symbol" class="form-control" value="{{ symbol or 'BTCUSDT' }}" required>
+                        <small class="text-muted">مثال: BTCUSDT، ETHUSDT، DOGEUSDT</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="quantity" class="form-label">الكمية:</label>
+                        <input type="number" id="quantity" name="quantity" class="form-control" value="{{ quantity or 0.0001 }}" step="0.0001" min="0.0001" required>
+                        <small class="text-muted">استخدم كمية صغيرة جدًا للاختبار (0.0001 أو أقل)</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="trade_type" class="form-label">نوع الصفقة:</label>
+                        <select id="trade_type" name="trade_type" class="form-select">
+                            <option value="BUY" {% if trade_type == 'BUY' %}selected{% endif %}>شراء (BUY)</option>
+                            <option value="SELL" {% if trade_type == 'SELL' %}selected{% endif %}>بيع (SELL)</option>
+                        </select>
+                        <small class="text-muted">اختر نوع الصفقة الاختبارية</small>
+                    </div>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">تنفيذ اختبار التداول</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% if result %}
+    <div class="card mb-4">
+        <div class="card-header bg-{{ 'success' if result.success else 'danger' }} text-white">
+            <h5 class="mb-0">نتيجة الاختبار: {{ 'ناجح ✅' if result.success else 'فاشل ❌' }}</h5>
+        </div>
+        <div class="card-body">
+            {% if result.success %}
+                <div class="alert alert-success">
+                    <h4>تم تنفيذ الصفقة بنجاح! 🎉</h4>
+                    <p>معرف الأمر: <strong>{{ result.test_details.order_id }}</strong></p>
+                    <p>الكمية المنفذة: <strong>{{ result.test_details.executed_qty }}</strong></p>
+                </div>
+                
+                {% if result.test_details.sell_result %}
+                <div class="alert alert-info">
+                    <h4>تم بيع الكمية المشتراة بنجاح:</h4>
+                    <p>معرف أمر البيع: <strong>{{ result.test_details.sell_result.orderId }}</strong></p>
+                </div>
+                {% endif %}
+                
+            {% else %}
+                <div class="alert alert-danger">
+                    <h4>فشل تنفيذ الصفقة:</h4>
+                    <p><strong>{{ result.error }}</strong></p>
+                </div>
+            {% endif %}
+            
+            <h5 class="mt-4">تفاصيل الاختبار:</h5>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tr>
+                        <th>العملة</th>
+                        <td>{{ symbol }}</td>
+                    </tr>
+                    <tr>
+                        <th>الكمية</th>
+                        <td>{{ quantity }}</td>
+                    </tr>
+                    {% if result.test_details.current_price %}
+                    <tr>
+                        <th>السعر الحالي</th>
+                        <td>{{ result.test_details.current_price }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if result.test_details.balance %}
+                    <tr>
+                        <th>الرصيد المتاح</th>
+                        <td>{{ result.test_details.balance }} USDT</td>
+                    </tr>
+                    {% endif %}
+                    {% if result.test_details.estimated_cost %}
+                    <tr>
+                        <th>التكلفة التقديرية</th>
+                        <td>{{ result.test_details.estimated_cost }} USDT</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+            
+            <h5 class="mt-4">صلاحيات API:</h5>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tr>
+                        <th>وجود المفاتيح</th>
+                        <td>{{ '✅ موجودة' if result.test_details.permissions.has_keys else '❌ غير موجودة' }}</td>
+                    </tr>
+                    <tr>
+                        <th>صلاحية القراءة</th>
+                        <td>{{ '✅ متاحة' if result.test_details.permissions.read_permission else '❌ غير متاحة' }}</td>
+                    </tr>
+                    <tr>
+                        <th>صلاحية التداول</th>
+                        <td>{{ '✅ متاحة' if result.test_details.permissions.trade_permission else '❌ غير متاحة' }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <h5 class="mt-4">استجابة API:</h5>
+            <div class="card">
+                <div class="card-body">
+                    <pre class="mb-0">{{ result.api_result }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">معلومات هامة</h5>
+        </div>
+        <div class="card-body">
+            <p>في حال نجاح الاختبار، يمكنك الاطمئنان أن:</p>
+            <ul>
+                <li>مفاتيح API تعمل بشكل صحيح</li>
+                <li>صلاحيات التداول مفعلة</li>
+                <li>البوت قادر على تنفيذ صفقات حقيقية</li>
+            </ul>
+            
+            <p>في حال فشل الاختبار، تحقق من:</p>
+            <ul>
+                <li>صحة مفاتيح API</li>
+                <li>تفعيل صلاحيات التداول في منصة MEXC</li>
+                <li>وجود رصيد كافٍ للتداول</li>
+                <li>رمز العملة مدعوم للتداول</li>
+            </ul>
+            
+            <div class="alert alert-danger mt-3">
+                <p><strong>اختبار البيع:</strong> إذا كنت تواجه مشاكل في وظيفة البيع، يمكنك استخدام <a href="{{ url_for('test_sell') }}" class="alert-link">صفحة اختبار البيع المخصصة</a> لتشخيص المشكلة بشكل أفضل.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

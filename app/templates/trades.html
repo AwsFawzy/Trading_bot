@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">
+                        <a href="{{ url_for('home') }}" class="text-decoration-none me-2">
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                        <i class="fas fa-money-bill-wave me-2"></i> سجل الصفقات
+                    </h2>
+                    <div>
+                        <a href="{{ url_for('home') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-home me-1"></i> الرئيسية
+                        </a>
+                        <a href="{{ url_for('watched_coins') }}" class="btn btn-outline-info ms-2">
+                            <i class="fas fa-search-dollar me-1"></i> العملات المراقبة
+                        </a>
+                        <button id="clean-fake-trades-btn" class="btn btn-outline-warning ms-2">
+                            <i class="fas fa-broom me-1"></i> تنظيف الصفقات الوهمية
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- عناصر التصفية -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-primary active filter-btn" data-filter="all">الكل</button>
+                            <button type="button" class="btn btn-primary filter-btn" data-filter="open">مفتوحة</button>
+                            <button type="button" class="btn btn-success filter-btn" data-filter="profit">رابحة</button>
+                            <button type="button" class="btn btn-danger filter-btn" data-filter="loss">خاسرة</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="trade-search" placeholder="بحث...">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- جدول الصفقات -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>العملة</th>
+                                <th>نوع الصفقة</th>
+                                <th>سعر الدخول</th>
+                                <th>سعر الخروج</th>
+                                <th>الكمية</th>
+                                <th>تاريخ الفتح</th>
+                                <th>تاريخ الإغلاق</th>
+                                <th>النتيجة</th>
+                                <th>نسبة الربح/الخسارة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trade in all_trades %}
+                            <tr class="trade-row {{ trade.status }} {{ trade.result|lower }}">
+                                <td>{{ trade.symbol }}</td>
+                                <td>شراء</td>
+                                <td>{{ trade.entry_price }}</td>
+                                <td>
+                                    {% if trade.status == 'CLOSED' %}
+                                        {{ trade.close_price }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>{{ trade.quantity }}</td>
+                                <td>{{ trade.opened_at }}</td>
+                                <td>
+                                    {% if trade.status == 'CLOSED' %}
+                                        {{ trade.closed_at }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if trade.status == 'OPEN' %}
+                                        <span class="badge bg-primary">مفتوحة</span>
+                                    {% elif trade.result == 'PROFIT' %}
+                                        <span class="badge bg-success">ربح</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">خسارة</span>
+                                    {% endif %}
+                                </td>
+                                <td class="{% if trade.get('profit_pct', 0) > 0 %}text-success{% elif trade.get('profit_pct', 0) < 0 %}text-danger{% else %}text-white{% endif %}">
+                                    {% if trade.get('status') == 'CLOSED' %}
+                                        {{ trade.get('profit_pct', 0)|safe_round(2) }}%
+                                    {% else %}
+                                        {{ trade.get('current_profit_pct', 0)|safe_round(2) }}%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if not all_trades %}
+                <div class="text-center py-4">
+                    <i class="fas fa-history fa-3x mb-3 text-white-50"></i>
+                    <p class="lead">لا توجد صفقات مسجلة حتى الآن</p>
+                </div>
+                {% endif %}
+                
+                <!-- ملخص الصفقات -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card bg-secondary">
+                            <div class="card-body">
+                                <h5 class="card-title">ملخص الصفقات</h5>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-1">إجمالي الصفقات:</p>
+                                        <p class="mb-1">صفقات مفتوحة:</p>
+                                        <p class="mb-1">صفقات مغلقة:</p>
+                                        <p class="mb-1">صفقات رابحة:</p>
+                                        <p class="mb-1">صفقات خاسرة:</p>
+                                    </div>
+                                    <div class="col-6 text-start">
+                                        <p class="mb-1">{{ stats.get('total_trades', 0) }}</p>
+                                        <p class="mb-1">{{ stats.get('open_trades', 0) }}</p>
+                                        <p class="mb-1">{{ stats.get('closed_trades', 0) }}</p>
+                                        <p class="mb-1 text-success">{{ stats.get('profit_trades', 0) }}</p>
+                                        <p class="mb-1 text-danger">{{ stats.get('loss_trades', 0) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card {% if stats.get('net_profit', 0) >= 0 %}bg-success{% else %}bg-danger{% endif %}">
+                            <div class="card-body">
+                                <h5 class="card-title">الأداء</h5>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-1">نسبة النجاح:</p>
+                                        <p class="mb-1">إجمالي الأرباح:</p>
+                                        <p class="mb-1">إجمالي الخسائر:</p>
+                                        <p class="mb-1">صافي الربح:</p>
+                                    </div>
+                                    <div class="col-6 text-start">
+                                        <p class="mb-1">{{ stats.get('win_rate', 0) }}%</p>
+                                        <p class="mb-1">{{ stats.get('total_profit', 0)|safe_round(2) }}% ({{ stats.get('total_profit_usdt', 0)|safe_round(2) }} USDT)</p>
+                                        <p class="mb-1">{{ stats.get('total_loss', 0)|safe_round(2) }}% ({{ stats.get('total_loss_usdt', 0)|safe_round(2) }} USDT)</p>
+                                        <p class="mb-1 fw-bold">{{ stats.get('net_profit', 0)|safe_round(2) }}% ({{ stats.get('net_profit_usdt', 0)|safe_round(2) }} USDT)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // تصفية الصفقات
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const tradeRows = document.querySelectorAll('.trade-row');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // إزالة الفلتر النشط من جميع الأزرار
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // تنشيط الزر الحالي
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                tradeRows.forEach(row => {
+                    if (filter === 'all') {
+                        row.style.display = '';
+                    } else if (filter === 'open' && row.classList.contains('OPEN')) {
+                        row.style.display = '';
+                    } else if (filter === 'profit' && row.classList.contains('profit')) {
+                        row.style.display = '';
+                    } else if (filter === 'loss' && row.classList.contains('loss')) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // البحث في الصفقات
+        const searchInput = document.getElementById('trade-search');
+        
+        searchInput.addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            
+            tradeRows.forEach(row => {
+                const symbolText = row.querySelector('td:first-child').textContent.toLowerCase();
+                
+                if (symbolText.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // تنظيف الصفقات الوهمية
+        const cleanFakeTradesBtn = document.getElementById('clean-fake-trades-btn');
+        if (cleanFakeTradesBtn) {
+            cleanFakeTradesBtn.addEventListener('click', function() {
+                // تغيير حالة الزر لإظهار أن العملية قيد التنفيذ
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> جاري التنظيف...';
+                this.disabled = true;
+                
+                // إرسال طلب API لتنظيف الصفقات الوهمية
+                fetch('/api/clean_fake_trades', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // إظهار إشعار نجاح
+                        alert(`تم التنظيف بنجاح: ${data.message}`);
+                        // إعادة تحميل الصفحة لعرض التغييرات
+                        window.location.reload();
+                    } else {
+                        // إظهار إشعار خطأ
+                        alert(`حدث خطأ أثناء التنظيف: ${data.message}`);
+                        // إعادة الزر إلى حالته الأصلية
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('خطأ في التنظيف:', error);
+                    alert('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.');
+                    // إعادة الزر إلى حالته الأصلية
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

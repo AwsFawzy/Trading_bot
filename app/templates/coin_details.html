@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">
+                        <a href="{{ url_for('watched_coins') }}" class="text-decoration-none me-2">
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                        تحليل عملة {{ coin.symbol }}
+                    </h2>
+                    <div class="btn-group">
+                        <button onclick="executeTrade('{{ coin.symbol }}')" class="btn btn-success">
+                            <i class="fas fa-shopping-cart me-1"></i> تداول العملة
+                        </button>
+                        <form method="POST" action="{{ url_for('scan_market_route') }}" class="ms-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-sync-alt me-1"></i> تحديث التحليل
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- معلومات أساسية -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-dark shadow">
+                            <div class="card-body">
+                                <h5 class="card-title">معلومات أساسية</h5>
+                                <div class="list-group list-group-flush bg-dark">
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>العملة:</span>
+                                        <span class="fw-bold">{{ coin.symbol }}</span>
+                                    </div>
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>السعر الحالي:</span>
+                                        <span class="fw-bold">{{ coin.current_price }}</span>
+                                    </div>
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>الاتجاه:</span>
+                                        <span class="badge {% if coin.trend == 'up' %}bg-success{% elif coin.trend == 'down' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                            {% if coin.trend == 'up' %}
+                                                <i class="fas fa-arrow-up"></i> صاعد
+                                            {% elif coin.trend == 'down' %}
+                                                <i class="fas fa-arrow-down"></i> هابط
+                                            {% else %}
+                                                <i class="fas fa-minus"></i> محايد
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>تغير 24 ساعة:</span>
+                                        <span class="{% if coin.change_24h > 0 %}text-success{% elif coin.change_24h < 0 %}text-danger{% else %}text-white{% endif %}">
+                                            {{ coin.change_24h|safe_round(2) }}%
+                                        </span>
+                                    </div>
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>حجم التداول:</span>
+                                        <span>{{ (coin.volume_24h / 1000)|safe_round(0) }}K USDT</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-dark shadow">
+                            <div class="card-body">
+                                <h5 class="card-title">تحليل فني</h5>
+                                <div class="list-group list-group-flush bg-dark">
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>مؤشر RSI:</span>
+                                        <span class="{% if coin.analysis.rsi < 30 %}text-info{% elif coin.analysis.rsi > 70 %}text-warning{% else %}text-white{% endif %}">
+                                            {{ coin.analysis.rsi|safe_round(1) }}
+                                        </span>
+                                    </div>
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>المتوسطات المتحركة:</span>
+                                        <span>{{ coin.analysis.ema_status }}</span>
+                                    </div>
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>التقلب:</span>
+                                        <span>{{ coin.analysis.volatility|safe_round(2) }}%</span>
+                                    </div>
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>الربح المحتمل:</span>
+                                        <span class="text-success">+{{ coin.potential_profit|safe_round(2) }}%</span>
+                                    </div>
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>سبب الفرصة:</span>
+                                        <span>{{ coin.reason }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-dark shadow">
+                            <div class="card-body">
+                                <h5 class="card-title">توصيات التداول</h5>
+                                <div class="alert {% if coin.trend == 'up' or coin.analysis.rsi < 40 %}alert-success{% elif coin.trend == 'down' and coin.analysis.rsi > 60 %}alert-danger{% else %}alert-warning{% endif %} mt-3">
+                                    {% if coin.trend == 'up' and coin.potential_profit > 1 %}
+                                        <i class="fas fa-check-circle me-1"></i> <strong>شراء</strong>: فرصة صاعدة قوية مع احتمالية ربح {{ coin.potential_profit|safe_round(2) }}%
+                                    {% elif coin.trend == 'up' %}
+                                        <i class="fas fa-check-circle me-1"></i> <strong>شراء</strong>: الاتجاه صاعد مع احتمالية ربح معتدلة
+                                    {% elif coin.analysis.rsi < 30 %}
+                                        <i class="fas fa-check-circle me-1"></i> <strong>شراء</strong>: العملة في منطقة ذروة بيع، مؤشر RSI منخفض
+                                    {% elif coin.trend == 'down' and coin.analysis.rsi > 70 %}
+                                        <i class="fas fa-times-circle me-1"></i> <strong>تجنب</strong>: الاتجاه هابط والعملة في منطقة ذروة شراء
+                                    {% else %}
+                                        <i class="fas fa-info-circle me-1"></i> <strong>مراقبة</strong>: اتجاه غير واضح، انتظر إشارات إضافية
+                                    {% endif %}
+                                </div>
+                                
+                                <h6 class="mt-4">أهداف السعر المقترحة:</h6>
+                                <div class="list-group list-group-flush bg-dark">
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>هدف الربح:</span>
+                                        <span class="text-success">{{ (coin.current_price * (1 + coin.potential_profit/100))|safe_round(6) }}</span>
+                                    </div>
+                                    <div class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+                                        <span>وقف الخسارة:</span>
+                                        <span class="text-danger">{{ (coin.current_price * 0.99)|safe_round(6) }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2 mt-3">
+                                    <button onclick="executeTrade('{{ coin.symbol }}')" class="btn btn-success">
+                                        <i class="fas fa-shopping-cart me-1"></i> تنفيذ صفقة
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- رسم بياني ومعلومات تفصيلية -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card bg-dark shadow">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">تحليل السعر التاريخي</h5>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    معلومات الأسعار والرسوم البيانية مستمدة من API الخاص بمنصة MEXC.
+                                </div>
+                                <div class="chart-container" style="position: relative; height:400px; width:100%;">
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-chart-line fa-3x mb-3 text-white-50"></i>
+                                        <p class="lead">الرسم البياني غير متاح حالياً</p>
+                                        <p class="text-white-50">الرسوم البيانية المتقدمة ستكون متاحة في الإصدار القادم</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-dark shadow">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">معلومات إضافية</h5>
+                                <div class="list-group list-group-flush bg-dark">
+                                    <div class="list-group-item bg-dark">
+                                        <h6>إدارة المخاطر:</h6>
+                                        <p>- استخدام وقف خسارة بنسبة 1%</p>
+                                        <p>- جني أرباح عند {{ coin.potential_profit|safe_round(1) }}%</p>
+                                        <p>- استخدام 5% فقط من رأس المال</p>
+                                    </div>
+                                    <div class="list-group-item bg-dark">
+                                        <h6>مؤشرات إضافية:</h6>
+                                        <p>نموذج الشموع: {{ 'إيجابي' if coin.trend == 'up' else 'سلبي' if coin.trend == 'down' else 'محايد' }}</p>
+                                        <p>الأحجام: {{ 'مرتفعة' if coin.volume_24h > 1000000 else 'متوسطة' if coin.volume_24h > 100000 else 'منخفضة' }}</p>
+                                        <p>اتجاه السوق العام: {{ 'صاعد' if coin.trend == 'up' else 'هابط' if coin.trend == 'down' else 'محايد' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة تأكيد التداول -->
+<div class="modal fade" id="tradeConfirmModal" tabindex="-1" aria-labelledby="tradeConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tradeConfirmModalLabel">تأكيد عملية التداول</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من رغبتك في تنفيذ صفقة تداول على العملة <span id="coin-symbol" class="fw-bold"></span>؟</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    سيتم استخدام رأس المال المتاح للصفقة وفقاً لإعدادات إدارة المخاطر.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-success" id="confirm-trade-btn">
+                    <i class="fas fa-check-circle me-1"></i> تأكيد التداول
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // وظيفة تنفيذ التداول
+    function executeTrade(symbol) {
+        // تعيين اسم العملة في نافذة التأكيد
+        document.getElementById('coin-symbol').textContent = symbol;
+        
+        // إظهار نافذة التأكيد
+        var modal = new bootstrap.Modal(document.getElementById('tradeConfirmModal'));
+        modal.show();
+        
+        // إضافة مستمع حدث لزر التأكيد
+        document.getElementById('confirm-trade-btn').onclick = function() {
+            // إغلاق النافذة
+            modal.hide();
+            
+            // إظهار مؤشر التحميل
+            document.getElementById('confirm-trade-btn').innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> جارِ التنفيذ...';
+            document.getElementById('confirm-trade-btn').disabled = true;
+            
+            // إرسال طلب API لتنفيذ الصفقة
+            fetch("{{ url_for('api_execute_trade') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    symbol: symbol
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    // نجاح العملية
+                    alert("تم تنفيذ الصفقة بنجاح: " + data.message);
+                    // إعادة تحميل الصفحة لتحديث قائمة الصفقات
+                    window.location.href = "{{ url_for('trades') }}";
+                } else {
+                    // فشل العملية
+                    alert("فشل في تنفيذ الصفقة: " + data.message);
+                    // إعادة تفعيل الزر
+                    document.getElementById('confirm-trade-btn').innerHTML = '<i class="fas fa-check-circle me-1"></i> تأكيد التداول';
+                    document.getElementById('confirm-trade-btn').disabled = false;
+                }
+            })
+            .catch(error => {
+                // خطأ في الاتصال
+                alert("حدث خطأ أثناء الاتصال بالخادم: " + error);
+                // إعادة تفعيل الزر
+                document.getElementById('confirm-trade-btn').innerHTML = '<i class="fas fa-check-circle me-1"></i> تأكيد التداول';
+                document.getElementById('confirm-trade-btn').disabled = false;
+            });
+        };
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mobile-card bg-dark shadow p-3 mb-3">
+    <h4 class="mb-3"><i class="fas fa-file-alt me-2"></i> التقارير اليومية</h4>
+    
+    <div class="mb-3">
+        <p>تم تفعيل إرسال تقرير يومي بالأداء إلى حساب التلجرام المسجل في الساعة 8:00 مساءً.</p>
+        <p>يحتوي التقرير على المعلومات التالية:</p>
+        <ul>
+            <li>عدد الصفقات اليومية (الرابحة والخاسرة)</li>
+            <li>نسبة الربح/الخسارة اليومية</li>
+            <li>الرصيد الحالي للحساب</li>
+            <li>الصفقات النشطة وأدائها الحالي</li>
+        </ul>
+    </div>
+    
+    <div class="d-grid gap-3">
+        <button id="generate-report-btn" class="btn btn-primary mobile-button">
+            <i class="fas fa-file-export me-2"></i> إرسال تقرير الآن
+        </button>
+    </div>
+</div>
+
+<div class="mobile-card bg-dark shadow p-3 mb-3">
+    <h4 class="mb-3"><i class="fas fa-cog me-2"></i> إعدادات التقارير</h4>
+    
+    <form method="POST" action="{{ url_for('update_report_settings') }}" class="mb-3">
+        <div class="mb-3">
+            <label for="report-hour" class="form-label">وقت إرسال التقرير اليومي:</label>
+            <select id="report-hour" name="report_hour" class="form-select">
+                {% for hour in range(0, 24) %}
+                <option value="{{ hour }}" {% if hour == 20 %}selected{% endif %}>{{ hour }}:00</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="d-grid">
+            <button type="submit" class="btn btn-success mobile-button">
+                <i class="fas fa-save me-2"></i> حفظ الإعدادات
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('generate-report-btn').addEventListener('click', function() {
+        // تعطيل الزر أثناء إرسال الطلب
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> جاري الإرسال...';
+        
+        // إرسال طلب لإنشاء تقرير فوري
+        fetch('/generate_report', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('تم إرسال التقرير بنجاح!');
+            } else {
+                alert('حدث خطأ أثناء إرسال التقرير: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('حدث خطأ: ' + error);
+        })
+        .finally(() => {
+            // إعادة تفعيل الزر بعد انتهاء العملية
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-file-export me-2"></i> إرسال تقرير الآن';
+        });
+    });
+</script>
+{% endblock %}

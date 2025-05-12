@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حدث خطأ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            text-align: right;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #e74c3c;
+        }
+        .error-message {
+            background-color: #f9ebea;
+            border-left: 5px solid #e74c3c;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حدث خطأ</h1>
+        <p>نعتذر، حدث خطأ أثناء تنفيذ العملية.</p>
+        
+        <div class="error-message">
+            <strong>تفاصيل الخطأ:</strong>
+            <p>{{ error }}</p>
+        </div>
+        
+        <a href="/" class="btn">العودة للصفحة الرئيسية</a>
+    </div>
+</body>
+</html>

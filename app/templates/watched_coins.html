@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0"><i class="fas fa-search-dollar me-2"></i> العملات المراقبة</h2>
+                    <div class="btn-group">
+                        <form method="POST" action="{{ url_for('scan_market_route') }}" class="me-2">
+                            <button type="submit" class="btn btn-info">
+                                <i class="fas fa-sync-alt"></i> فحص السوق
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('start_scanner') }}" class="me-2">
+                            <input type="hidden" name="interval" value="300">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-play-circle"></i> تشغيل المراقبة التلقائية
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('stop_scanner') }}" class="me-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-stop-circle"></i> إيقاف المراقبة
+                            </button>
+                        </form>
+                        <div class="btn-group">
+                            <form method="POST" action="{{ url_for('start') }}" class="me-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-robot"></i> تشغيل التداول التلقائي
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('stop') }}">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-hand-paper"></i> إيقاف التداول التلقائي
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- القائمة الرئيسية للعملات المراقبة -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow">
+                            <div class="card-header bg-dark">
+                                <h5 class="mb-0">العملات المرشحة للتداول</h5>
+                                <small class="text-white-50">فرص محتملة للتداول مع ربح يومي بنسبة 1% على الأقل</small>
+                            </div>
+                            <div class="card-body">
+                                {% if coins %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>العملة</th>
+                                                <th>السعر الحالي</th>
+                                                <th>الاتجاه</th>
+                                                <th>الربح المحتمل</th>
+                                                <th>حجم التداول (24س)</th>
+                                                <th>التغير (24س)</th>
+                                                <th>مؤشر RSI</th>
+                                                <th>السبب</th>
+                                                <th>الإجراءات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for coin in coins %}
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ url_for('coin_details', symbol=coin.symbol) }}" class="fw-bold text-decoration-none">
+                                                        {{ coin.symbol }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ coin.current_price|safe_round(6) }}</td>
+                                                <td>
+                                                    <span class="badge {% if coin.trend == 'up' %}bg-success{% elif coin.trend == 'down' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                                        {% if coin.trend == 'up' %}
+                                                            <i class="fas fa-arrow-up"></i> صاعد
+                                                        {% elif coin.trend == 'down' %}
+                                                            <i class="fas fa-arrow-down"></i> هابط
+                                                        {% else %}
+                                                            <i class="fas fa-minus"></i> محايد
+                                                        {% endif %}
+                                                    </span>
+                                                </td>
+                                                <td class="text-success">+{{ coin.potential_profit|safe_round(2) }}%</td>
+                                                <td>{{ (coin.volume_24h / 1000)|safe_round(0) }}K USDT</td>
+                                                <td class="{% if coin.change_24h > 0 %}text-success{% elif coin.change_24h < 0 %}text-danger{% else %}text-white{% endif %}">
+                                                    {{ coin.change_24h|safe_round(2) }}%
+                                                </td>
+                                                <td>
+                                                    <span class="{% if coin.rsi < 30 %}text-info{% elif coin.rsi > 70 %}text-warning{% else %}text-white{% endif %}">
+                                                        {{ coin.rsi|safe_round(1) }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ coin.reason }}</td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <a href="{{ url_for('coin_details', symbol=coin.symbol) }}" class="btn btn-sm btn-primary">
+                                                            <i class="fas fa-chart-line"></i> تحليل
+                                                        </a>
+                                                        <button onclick="executeTrade('{{ coin.symbol }}')" class="btn btn-sm btn-success ms-1">
+                                                            <i class="fas fa-shopping-cart"></i> تداول
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-search fa-3x mb-3 text-white-50"></i>
+                                    <p class="lead mb-0">لم يتم العثور على عملات مرشحة للتداول</p>
+                                    <p class="text-white-50 mt-2">قم بتشغيل فاحص السوق للبحث عن فرص جديدة</p>
+                                    <form method="POST" action="{{ url_for('scan_market_route') }}" class="mt-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-sync-alt me-1"></i> فحص السوق الآن
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- معلومات عن معايير البحث -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card bg-dark">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">معايير اختيار العملات</h5>
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">سعر العملة بين 0.01 و $50</li>
+                                    <li class="list-group-item bg-dark">حجم تداول 24 ساعة > 50,000 USDT</li>
+                                    <li class="list-group-item bg-dark">التغير اليومي < 30%</li>
+                                    <li class="list-group-item bg-dark">الربح المحتمل > 0.5%</li>
+                                    <li class="list-group-item bg-dark">اتجاه سعري صاعد أو محايد</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">مؤشرات التحليل المستخدمة</h5>
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">المتوسطات المتحركة (EMA, SMA)</li>
+                                    <li class="list-group-item bg-dark">مؤشر القوة النسبية (RSI)</li>
+                                    <li class="list-group-item bg-dark">أنماط الشموع</li>
+                                    <li class="list-group-item bg-dark">تحليل حجم التداول</li>
+                                    <li class="list-group-item bg-dark">تحليل الاتجاه العام</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة تأكيد التداول -->
+<div class="modal fade" id="tradeConfirmModal" tabindex="-1" aria-labelledby="tradeConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tradeConfirmModalLabel">تأكيد عملية التداول</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من رغبتك في تنفيذ صفقة تداول على العملة <span id="coin-symbol" class="fw-bold"></span>؟</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    سيتم استخدام رأس المال المتاح للصفقة وفقاً لإعدادات إدارة المخاطر.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-success" id="confirm-trade-btn">
+                    <i class="fas fa-check-circle me-1"></i> تأكيد التداول
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // تحديث البيانات كل دقيقة
+    setInterval(function() {
+        console.log("Updating dashboard data...");
+        fetch("{{ url_for('api_watched_coins') }}")
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    // تحديث البيانات - في تطبيق حقيقي، هنا سيتم تحديث الجدول بدون إعادة تحميل الصفحة
+                    console.log("Received updated coin data:", data.data.length, "coins");
+                }
+            })
+            .catch(error => console.error("Error updating data:", error));
+    }, 30000);  // تحديث كل 30 ثانية
+    
+    // وظيفة تنفيذ التداول
+    function executeTrade(symbol) {
+        // تعيين اسم العملة في نافذة التأكيد
+        document.getElementById('coin-symbol').textContent = symbol;
+        
+        // إظهار نافذة التأكيد
+        var modal = new bootstrap.Modal(document.getElementById('tradeConfirmModal'));
+        modal.show();
+        
+        // إضافة مستمع حدث لزر التأكيد
+        document.getElementById('confirm-trade-btn').onclick = function() {
+            // إغلاق النافذة
+            modal.hide();
+            
+            // إظهار مؤشر التحميل
+            document.getElementById('confirm-trade-btn').innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> جارِ التنفيذ...';
+            document.getElementById('confirm-trade-btn').disabled = true;
+            
+            // إرسال طلب API لتنفيذ الصفقة
+            fetch("{{ url_for('api_execute_trade') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    symbol: symbol
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    // نجاح العملية
+                    alert("تم تنفيذ الصفقة بنجاح: " + data.message);
+                    // إعادة تحميل الصفحة لتحديث قائمة الصفقات
+                    window.location.href = "{{ url_for('trades') }}";
+                } else {
+                    // فشل العملية
+                    alert("فشل في تنفيذ الصفقة: " + data.message);
+                    // إعادة تفعيل الزر
+                    document.getElementById('confirm-trade-btn').innerHTML = '<i class="fas fa-check-circle me-1"></i> تأكيد التداول';
+                    document.getElementById('confirm-trade-btn').disabled = false;
+                }
+            })
+            .catch(error => {
+                // خطأ في الاتصال
+                alert("حدث خطأ أثناء الاتصال بالخادم: " + error);
+                // إعادة تفعيل الزر
+                document.getElementById('confirm-trade-btn').innerHTML = '<i class="fas fa-check-circle me-1"></i> تأكيد التداول';
+                document.getElementById('confirm-trade-btn').disabled = false;
+            });
+        };
+    }
+</script>
+{% endblock %}

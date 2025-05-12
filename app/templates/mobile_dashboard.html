@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- واجهة الهاتف الذكي المبسطة -->
+<!-- زر تشغيل/إيقاف البوت -->
+<div class="bot-controls">
+    <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">حالة البوت</h5>
+        <div class="d-flex">
+            <form method="POST" action="{{ url_for('start') }}" class="me-2">
+                <button type="submit" class="btn {% if bot_running %}btn-outline-success{% else %}btn-success{% endif %} mobile-button" {% if bot_running %}disabled{% endif %}>
+                    <i class="fas fa-play-circle"></i> تشغيل
+                </button>
+            </form>
+            <form method="POST" action="{{ url_for('stop') }}">
+                <button type="submit" class="btn {% if not bot_running %}btn-outline-danger{% else %}btn-danger{% endif %} mobile-button" {% if not bot_running %}disabled{% endif %}>
+                    <i class="fas fa-stop-circle"></i> إيقاف
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- العملات المراقبة -->
+{% if watched_coins %}
+<div class="mobile-card bg-dark shadow p-3 mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0"><i class="fas fa-eye me-2"></i> العملات المراقبة</h4>
+        <span class="badge bg-secondary">{{ watched_coins|length }} عملات</span>
+    </div>
+    
+    <div class="trades-ticker-container">
+        <div class="trades-ticker-scroll">
+            {% for coin in watched_coins %}
+            <div class="trade-mini-card" style="border-right: 4px solid 
+                {% if coin.potential_profit > 1 %}var(--bs-success)
+                {% elif coin.potential_profit > 0.5 %}var(--bs-warning)
+                {% else %}var(--bs-secondary){% endif %}">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div>
+                        <strong>{{ coin.symbol }}</strong>
+                    </div>
+                    <div>
+                        <span class="badge {% if coin.potential_profit > 1 %}bg-success
+                                          {% elif coin.potential_profit > 0.5 %}bg-warning 
+                                          {% else %}bg-secondary{% endif %}">
+                            {{ coin.potential_profit|safe_round(2) }}%
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small>{{ coin.current_price|safe_round(4) }}</small>
+                    <small class="{% if coin.change_24h > 0 %}text-success{% elif coin.change_24h < 0 %}text-danger{% endif %}">
+                        {{ coin.change_24h|safe_round(2) }}%
+                    </small>
+                </div>
+                <div class="text-center">
+                    <span class="badge bg-dark">{{ coin.trend }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ملخص الإحصائيات الأساسية -->
+<div class="mobile-card bg-dark shadow p-3 mb-3">
+    <h4 class="mb-3"><i class="fas fa-wallet me-2"></i> الحساب</h4>
+    <div class="stats-summary">
+        <div class="stat-card bg-primary">
+            <div class="stat-value">{{ capital.total_balance|default(50)|safe_round(4) }}</div>
+            <div class="stat-label">الرصيد الكلي</div>
+        </div>
+        <div class="stat-card bg-secondary">
+            <div class="stat-value">{{ capital.per_trade_capital|default(2)|safe_round(2) }}</div>
+            <div class="stat-label">لكل صفقة</div>
+        </div>
+        <div class="stat-card {% if capital.trading_allowed %}bg-success{% else %}bg-danger{% endif %}">
+            <div class="stat-value">
+                {% if capital.trading_allowed %}مسموح{% else %}ممنوع{% endif %}
+            </div>
+            <div class="stat-label">حالة التداول</div>
+        </div>
+        <div class="stat-card {% if performance.net_profit >= 0 %}bg-success{% else %}bg-danger{% endif %}">
+            <div class="stat-value">{{ performance.net_profit|default(0)|safe_round(2) }}%</div>
+            <div class="stat-label">صافي الربح</div>
+        </div>
+        <!-- إضافة بطاقة إحصائية للربح الإجمالي بالدولار -->
+        <div class="stat-card {% if capital.total_profit_dollar > 0 %}bg-success{% elif capital.total_profit_dollar < 0 %}bg-danger{% else %}bg-secondary{% endif %}">
+            <div class="stat-value">{{ capital.total_profit_dollar|default(0.11)|safe_round(2) }}</div>
+            <div class="stat-label">الربح بالدولار</div>
+        </div>
+        <!-- إضافة بطاقة إحصائية لمعدل الربح -->
+        <div class="stat-card bg-info">
+            <div class="stat-value">{{ capital.win_rate|default(0)|safe_round(1) }}%</div>
+            <div class="stat-label">معدل الربح</div>
+        </div>
+        <!-- إضافة بطاقة إحصائية لعدد الصفقات المغلقة -->
+        <div class="stat-card bg-secondary">
+            <div class="stat-value">{{ capital.num_closed_trades|default(0) }}</div>
+            <div class="stat-label">صفقات مغلقة</div>
+        </div>
+    </div>
+</div>
+
+<!-- شريط العملات المصغر للصفقات النشطة -->
+<div class="mobile-card bg-dark shadow p-3 mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i> متداول CJ</h4>
+        <span class="badge bg-secondary">{{ trades|length }} صفقات</span>
+    </div>
+    
+    <!-- شريط مصغر للصفقات يمكن التمرير عليه -->
+    <div class="trades-ticker-container">
+        {% if trades %}
+            <div class="trades-ticker-scroll">
+                {% for trade in trades %}
+                <div class="trade-mini-card" style="border-right: 4px solid {% if trade.change_percent > 0 %}var(--bs-success){% elif trade.change_percent < 0 %}var(--bs-danger){% else %}var(--bs-secondary){% endif %}">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div>
+                            <span class="badge bg-info">#{{ loop.index }}</span>
+                            <strong>{{ trade.symbol }}</strong>
+                        </div>
+                        <div>
+                            <span class="badge {% if trade.change_percent > 0 %}bg-success{% elif trade.change_percent < 0 %}bg-danger{% else %}bg-secondary{% endif %}">
+                                {{ trade.change_percent|safe_round(2) }}%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <small>شراء: {{ trade.price|default('0', true) }}</small>
+                        <small>حالياً: {{ trade.current_price|default('0', true) }}</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <small>الكمية: {{ trade.quantity|default(trade.origQty|default('0', true), true) }}</small>
+                        <small>القيمة: {% if trade.current_price and (trade.quantity or trade.origQty) %}
+                            {{ (trade.current_price|float * (trade.quantity|default(trade.origQty, true)|float))|safe_round(2) }}
+                        {% else %}0.00{% endif %} $</small>
+                    </div>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar {% if trade.change_percent > 0 %}bg-success{% elif trade.change_percent < 0 %}bg-danger{% else %}bg-secondary{% endif %}" 
+                             role="progressbar" 
+                             style="width: {% if (trade.change_percent|abs / 0.5) > 100 %}100{% else %}{{ (trade.change_percent|abs / 0.5) }}{% endif %}%;">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i> لا توجد صفقات مفتوحة حالياً.
+            </div>
+        {% endif %}
+    </div>
+    
+    <a href="{{ url_for('trades') }}" class="btn btn-outline-info w-100 mt-3">
+        <i class="fas fa-search-dollar me-1"></i> عرض كل الصفقات
+    </a>
+</div>
+
+<!-- تفاصيل الصفقات الحالية -->
+<div class="mobile-card bg-dark shadow p-3 mb-3">
+    <h4 class="mb-3"><i class="fas fa-list me-2"></i> تفاصيل الصفقات</h4>
+    
+    {% if trades %}
+        {% for trade in trades %}
+        <div class="trade-card mb-2 {% if trade.change_percent > 0 %}bg-success bg-opacity-25{% elif trade.change_percent < 0 %}bg-danger bg-opacity-25{% else %}bg-secondary{% endif %}">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">{{ trade.symbol }} <span class="badge bg-info">#{{ loop.index }}</span></h5>
+                    <div>{{ trade.origQty|safe_round(2) }} بسعر {{ trade.price|safe_round(4) }}</div>
+                </div>
+                <div class="text-end">
+                    <h5 class="mb-0 {% if trade.change_percent > 0 %}text-success{% elif trade.change_percent < 0 %}text-danger{% endif %}">
+                        {{ trade.change_percent|safe_round(2) }}%
+                    </h5>
+                    <div>{{ trade.current_price|safe_round(4) }}</div>
+                </div>
+            </div>
+            <div class="progress mt-2" style="height: 5px;">
+                <div class="progress-bar progress-bar-striped {% if trade.change_percent > 0 %}bg-success{% elif trade.change_percent < 0 %}bg-danger{% else %}bg-secondary{% endif %}" 
+                     role="progressbar" 
+                     style="width: {% if (trade.change_percent|abs / 1.5) > 100 %}100{% else %}{{ (trade.change_percent|abs / 1.5) }}{% endif %}%;" 
+                     aria-valuenow="{{ trade.change_percent|abs }}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mt-1">
+                <small>خسارة: {{ trade.stop_loss_price|safe_round(4) }}</small>
+                <small>ربح: {{ trade.take_profit_price|safe_round(4) }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> لا توجد صفقات مفتوحة حالياً.
+        </div>
+    {% endif %}
+</div>
+
+<!-- ملخص أداء النظام -->
+<div class="mobile-card bg-dark shadow p-3 mb-3">
+    <h4 class="mb-3"><i class="fas fa-chart-pie me-2"></i> أداء النظام</h4>
+    
+    <div class="d-flex justify-content-between mb-2">
+        <div>صفقات ناجحة</div>
+        <div>{{ performance.profit_trades }} من {{ performance.closed_trades }}</div>
+    </div>
+    <div class="progress mb-3" style="height: 8px;">
+        <div class="progress-bar bg-success" 
+             role="progressbar" 
+             style="width: {{ performance.win_rate }}%;" 
+             aria-valuenow="{{ performance.win_rate }}" 
+             aria-valuemin="0" 
+             aria-valuemax="100">
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-between mb-2">
+        <div>صافي الربح</div>
+        <div>{{ performance.net_profit|safe_round(2) }}%</div>
+    </div>
+    <div class="progress mb-3" style="height: 8px;">
+        <div class="progress-bar {% if performance.net_profit >= 0 %}bg-success{% else %}bg-danger{% endif %}" 
+             role="progressbar" 
+             style="width: {{ performance.net_profit|abs|safe_round(2) }}%;" 
+             aria-valuenow="{{ performance.net_profit|abs|safe_round(2) }}" 
+             aria-valuemin="0" 
+             aria-valuemax="100">
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-between mb-2">
+        <div>خسارة اليوم</div>
+        <div>{{ capital.daily_loss|safe_round(2) }}% من {{ capital.daily_loss_limit }}%</div>
+    </div>
+    <div class="progress mb-3" style="height: 8px;">
+        <div class="progress-bar bg-danger" 
+             role="progressbar" 
+             style="width: {{ capital.daily_loss_percent|safe_round(2) }}%;" 
+             aria-valuenow="{{ capital.daily_loss_percent|safe_round(2) }}" 
+             aria-valuemin="0" 
+             aria-valuemax="100">
+        </div>
+    </div>
+    
+    <a href="{{ url_for('watched_coins') }}" class="btn btn-outline-primary w-100">
+        <i class="fas fa-search me-1"></i> العملات المراقبة حالياً
+    </a>
+</div>
+{% endblock %}

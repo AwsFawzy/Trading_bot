@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            text-align: right;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .info-section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .status-active {
+            padding: 5px 10px;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .status-inactive {
+            padding: 5px 10px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            margin-left: 10px;
+        }
+        .btn-start {
+            background-color: #2ecc71;
+        }
+        .btn-stop {
+            background-color: #e74c3c;
+        }
+        .btn-disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash-message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .flash-success {
+            background-color: #d5f5e3;
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+        .flash-warning {
+            background-color: #fef9e7;
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+        .flash-danger {
+            background-color: #fadbd8;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>لوحة التحكم في بوت التداول</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+            {% for category, message in messages %}
+              <div class="flash-message flash-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        
+        <div class="info-section">
+            <h2>حالة البوت</h2>
+            {% if bot_status and bot_status.running %}
+                <p><span class="status-active">نشط</span> البوت يعمل حالياً</p>
+            {% else %}
+                <p><span class="status-inactive">متوقف</span> البوت متوقف حالياً</p>
+            {% endif %}
+        </div>
+        
+        <div class="controls">
+            {% if bot_status and bot_status.running %}
+                <a href="/stop" class="btn btn-stop">إيقاف البوت</a>
+            {% else %}
+                <a href="/start" class="btn btn-start">تشغيل البوت</a>
+            {% endif %}
+            
+            <a href="/debug" class="btn">صفحة التصحيح</a>
+        </div>
+        
+        <div class="info-section">
+            <h2>معلومات النظام</h2>
+            <p class="success">واجهة المستخدم تعمل بنجاح</p>
+            <p class="success">نظام التداول متصل</p>
+        </div>
+    </div>
+</body>
+</html>
