@@ -1,0 +1,38 @@
+/* شريط العملات المصغر */
+.trades-ticker-container {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch; /* تحسين التمرير على iOS */
+}
+
+.trades-ticker-scroll {
+    display: flex;
+    gap: 8px;
+    padding: 5px 0;
+}
+
+.trade-mini-card {
+    min-width: 180px;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: var(--bs-dark);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+.trade-mini-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* تخصيصات للواجهة المحمولة */
+@media (max-width: 576px) {
+    .trades-ticker-scroll {
+        gap: 6px;
+    }
+    
+    .trade-mini-card {
+        min-width: 150px;
+    }
+}
