@@ -1,0 +1,143 @@
+2025-05-11 18:37:39,978 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:39,986 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:39,986 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:40,415 - diagnose_balance - INFO - ✅ تم استيراد الدوال بنجاح
+2025-05-11 18:37:40,415 - diagnose_balance - INFO - 🚀 بدء تشخيص مشكلة الرصيد...
+2025-05-11 18:37:40,416 - diagnose_balance - INFO - 🔍 بدء تشخيص رصيد USDT...
+2025-05-11 18:37:40,417 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:40,418 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:40,418 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:40,419 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:40,420 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:40,420 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:40,420 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:37:40,421 - mexc_api - DEBUG - Query string for signing: timestamp=1746988660418&recvWindow=5000
+2025-05-11 18:37:40,421 - mexc_api - DEBUG - Generated signature: 63dc4...
+2025-05-11 18:37:40,430 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:37:40,657 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "POST /api/v3/asset/getUserAsset?timestamp=1746988660418&recvWindow=5000&signature=63dc4ab7aa2f761f7a1565a3206ed9ab0044e09ed2f810eddc65b85cd653d1e1 HTTP/1.1" 404 30
+2025-05-11 18:37:40,658 - mexc_api - ERROR - User asset request failed with status code: 404
+2025-05-11 18:37:40,658 - mexc_api - ERROR - Response text: {"code":404,"msg":"Not Found"}
+2025-05-11 18:37:40,659 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:40,659 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:40,660 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:40,660 - mexc_api - INFO - Using API key starting with: mx0vg... for account balance request
+2025-05-11 18:37:40,660 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:40,661 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:40,661 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:40,661 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:37:40,661 - mexc_api - DEBUG - Query string for signing: timestamp=1746988660660&recvWindow=5000
+2025-05-11 18:37:40,661 - mexc_api - DEBUG - Generated signature: 99b4a...
+2025-05-11 18:37:40,661 - mexc_api - DEBUG - Request URL: https://api.mexc.com/api/v3/account
+2025-05-11 18:37:40,662 - mexc_api - DEBUG - Request params: {'timestamp': '1746988660660', 'recvWindow': '5000', 'signature': '99b4a8fe9f7ca120661451dadd6e9efe157126928bf24843c52cb99057634a23'}
+2025-05-11 18:37:40,663 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:37:41,218 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account?timestamp=1746988660660&recvWindow=5000&signature=99b4a8fe9f7ca120661451dadd6e9efe157126928bf24843c52cb99057634a23 HTTP/1.1" 200 714
+2025-05-11 18:37:41,219 - mexc_api - INFO - Account balance request successful
+2025-05-11 18:37:41,220 - mexc_api - INFO - تم العثور على رصيد SPOT لـ USDT: 28.76529381
+2025-05-11 18:37:41,221 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:41,221 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:41,222 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:41,223 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:41,223 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:41,223 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:41,224 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:37:41,224 - mexc_api - DEBUG - Query string for signing: timestamp=1746988661222&recvWindow=5000
+2025-05-11 18:37:41,224 - mexc_api - DEBUG - Generated signature: e4127...
+2025-05-11 18:37:41,226 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:37:41,741 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/asset/get-funding-asset?timestamp=1746988661222&recvWindow=5000&signature=e41273818b99e3733eda1b648426569f449b2610fb9e99c0b582b3f74dc04f66 HTTP/1.1" 200 0
+2025-05-11 18:37:41,742 - mexc_api - ERROR - Error getting funding balance for USDT: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:37:41,743 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:41,744 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:41,744 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:41,747 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:37:41,954 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account/balance?timestamp=1746988661744&recvWindow=5000&signature=5610ff174f96b97cda739d813aec2fbd4654e9a91ddfd43fe1afbf98166a5c41 HTTP/1.1" 200 0
+2025-05-11 18:37:41,955 - mexc_api - ERROR - خطأ في محاولات الطرق البديلة: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:37:41,956 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:41,957 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:41,957 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:41,957 - mexc_api - INFO - Using API key starting with: mx0vg... for total balance request
+2025-05-11 18:37:41,958 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:41,958 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:41,959 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:41,959 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:37:41,960 - mexc_api - DEBUG - Query string for signing: timestamp=1746988661957&recvWindow=5000
+2025-05-11 18:37:41,960 - mexc_api - DEBUG - Generated signature: c1a8e...
+2025-05-11 18:37:41,962 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:37:42,798 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/capital/config/getall?timestamp=1746988661957&recvWindow=5000&signature=c1a8e4f6fa283755f8d7b3f2b81129f85e9f1e89ccbcf0b5b5ecb4bc64a5bcb2 HTTP/1.1" 200 None
+2025-05-11 18:37:43,481 - mexc_api - INFO - تم العثور على رصيد USDT في النوع unknown: 0.0
+2025-05-11 18:37:43,482 - mexc_api - INFO - الرصيد الإجمالي من جميع المحافظ لـ USDT: 0.0
+2025-05-11 18:37:43,495 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:43,495 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:43,496 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:43,498 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:37:43,707 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account/balance?timestamp=1746988663496&recvWindow=5000&signature=4af5efebc434cff870c0b8839c1bafcf226b17ebe25ef41797bb409d0759b2c5 HTTP/1.1" 200 0
+2025-05-11 18:37:43,708 - mexc_api - ERROR - خطأ في محاولات الطرق البديلة: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:37:43,709 - mexc_api - INFO - الرصيد النهائي لـ USDT: 28.76529381
+2025-05-11 18:37:43,709 - diagnose_balance - INFO - 1️⃣ نتيجة get_balance: 28.76529381
+2025-05-11 18:37:43,709 - diagnose_balance - INFO - ✅ عملة USDT متوفرة برصيد: 28.76529381
+2025-05-11 18:37:43,710 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:43,711 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:43,711 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:43,711 - mexc_api - INFO - Using API key starting with: mx0vg... for account balance request
+2025-05-11 18:37:43,712 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:37:43,712 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:37:43,713 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:37:43,713 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:37:43,713 - mexc_api - DEBUG - Query string for signing: timestamp=1746988663712&recvWindow=5000
+2025-05-11 18:37:43,714 - mexc_api - DEBUG - Generated signature: ea497...
+2025-05-11 18:37:43,714 - mexc_api - DEBUG - Request URL: https://api.mexc.com/api/v3/account
+2025-05-11 18:37:43,714 - mexc_api - DEBUG - Request params: {'timestamp': '1746988663712', 'recvWindow': '5000', 'signature': 'ea497338eaecd6fb4e5e494c1da22af3243c1ce41fd7fafc616b1657045f478d'}
+2025-05-11 18:37:43,717 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:37:43,919 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account?timestamp=1746988663712&recvWindow=5000&signature=ea497338eaecd6fb4e5e494c1da22af3243c1ce41fd7fafc616b1657045f478d HTTP/1.1" 200 714
+2025-05-11 18:37:43,920 - mexc_api - INFO - Account balance request successful
+2025-05-11 18:37:43,920 - diagnose_balance - INFO - 2️⃣ نتيجة get_account_balance: {'makerCommission': None, 'takerCommission': None, 'buyerCommission': None, 'sellerCommission': None, 'canTrade': True, 'canWithdraw': True, 'canDeposit': True, 'updateTime': None, 'accountType': 'SPOT', 'balances': [{'asset': 'USDT', 'free': '28.76529381', 'locked': '0'}, {'asset': 'LEVER', 'free': '2.74', 'locked': '0'}, {'asset': 'ENA', 'free': '0.02', 'locked': '0'}, {'asset': 'DOT', 'free': '0.03', 'locked': '0'}, {'asset': 'MX', 'free': '0.00402041', 'locked': '0'}, {'asset': 'WIF', 'free': '0.01', 'locked': '0'}, {'asset': 'APT', 'free': '0.03', 'locked': '0'}, {'asset': 'XRP', 'free': '0.01', 'locked': '0'}, {'asset': 'XOXNO', 'free': '0.98', 'locked': '0'}, {'asset': 'SNT', 'free': '0.05', 'locked': '0'}, {'asset': 'BROCK', 'free': '0.14', 'locked': '0'}], 'permissions': ['SPOT']}
+2025-05-11 18:37:43,921 - diagnose_balance - INFO - 🔍 نوع البيانات: <class 'dict'>
+2025-05-11 18:37:43,921 - diagnose_balance - INFO - 📊 مفاتيح القاموس: dict_keys(['makerCommission', 'takerCommission', 'buyerCommission', 'sellerCommission', 'canTrade', 'canWithdraw', 'canDeposit', 'updateTime', 'accountType', 'balances', 'permissions'])
+2025-05-11 18:37:43,921 - diagnose_balance - WARNING - ⚠️ عملة USDT غير موجودة كمفتاح أساسي
+2025-05-11 18:37:43,922 - diagnose_balance - INFO - 🔍 عدد العناصر في 'balances': 11
+2025-05-11 18:37:43,922 - diagnose_balance - INFO - ✅ عملة USDT موجودة في 'balances' برصيد: 28.76529381
+2025-05-11 18:37:43,922 - diagnose_balance - ERROR - ❌ خطأ في get_user_asset: get_user_asset() missing 1 required positional argument: 'asset'
+2025-05-11 18:37:43,922 - diagnose_balance - INFO - 
+🔧 توصيات الإصلاح:
+2025-05-11 18:37:43,923 - diagnose_balance - INFO - 1️⃣. تعديل دالة execute_buy في trading_system.py للتعامل مع بنية البيانات الصحيحة
+2025-05-11 18:37:43,923 - diagnose_balance - INFO - 2️⃣. تأكد من أن get_account_balance() تعيد البيانات بالتنسيق المتوقع
+2025-05-11 18:37:43,923 - diagnose_balance - INFO - 3️⃣. في حالة عدم وجود USDT مباشرة، ابحث عنها في 'balances' إذا كانت موجودة
+2025-05-11 18:37:43,923 - diagnose_balance - INFO - 
+📝 توصية الإصلاح:
+2025-05-11 18:37:43,923 - diagnose_balance - INFO - 
+    # الكود الحالي في trading_system.py - execute_buy
+    try:
+        logger.info("التحقق من رصيد USDT قبل تنفيذ عملية الشراء...")
+        balance = get_account_balance()
+        if not balance or 'USDT' not in balance:
+            logger.error("❌ لم يتم العثور على رصيد USDT. تأكد من صلاحيات API.")
+            return False, {"error": "لم يتم العثور على رصيد USDT"}
+        
+        initial_usdt_balance = float(balance['USDT'].get('free', 0))
+        logger.info(f"💰 رصيد USDT المتاح: {initial_usdt_balance}")
+    
+    # الكود المقترح للإصلاح
+    try:
+        logger.info("التحقق من رصيد USDT قبل تنفيذ عملية الشراء...")
+        balance = get_account_balance()
+        
+        # طريقة 1: إذا كان USDT موجود كمفتاح مباشر
+        if balance and 'USDT' in balance:
+            initial_usdt_balance = float(balance['USDT'].get('free', 0))
+        # طريقة 2: إذا كان هناك قائمة 'balances'
+        elif balance and 'balances' in balance:
+            initial_usdt_balance = 0
+            for asset in balance['balances']:
+                if asset.get('asset') == 'USDT':
+                    initial_usdt_balance = float(asset.get('free', 0))
+                    break
+        # طريقة 3: استخدام get_balance مباشرة
+        else:
+            direct_balance = get_balance('USDT')
+            initial_usdt_balance = float(direct_balance) if direct_balance else 0
+        
+        if initial_usdt_balance <= 0:
+            logger.error(f"❌ رصيد USDT غير كافٍ. متاح: {initial_usdt_balance}")
+            return False, {"error": f"رصيد USDT غير كافٍ. متاح: {initial_usdt_balance}"}
+            
+        logger.info(f"💰 رصيد USDT المتاح: {initial_usdt_balance}")
+    

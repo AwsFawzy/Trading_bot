@@ -1,0 +1,7 @@
+[2025-05-11 17:50:25 +0000] [2922] [INFO] Starting gunicorn 23.0.0
+[2025-05-11 17:50:25 +0000] [2922] [INFO] Listening at: http://0.0.0.0:5005 (2922)
+[2025-05-11 17:50:25 +0000] [2922] [INFO] Using worker: sync
+[2025-05-11 17:50:25 +0000] [2928] [INFO] Booting worker with pid: 2928
+2025-05-11 17:50:25,477 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 17:50:25,477 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 17:50:25,477 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM

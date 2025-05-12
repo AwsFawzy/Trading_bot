@@ -1,0 +1,325 @@
+2025-05-11 18:35:20,800 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:20,802 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:20,803 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:21,223 - open_single_trade - INFO - محاولة استيراد وظائف التداول من trading_system...
+2025-05-11 18:35:21,224 - open_single_trade - INFO - 🚀 بدء تنفيذ فتح صفقة جديدة...
+2025-05-11 18:35:21,235 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.telegram.org:443
+2025-05-11 18:35:21,632 - urllib3.connectionpool - DEBUG - https://api.telegram.org:443 "GET /bot8129105671:AAEW5tgtdAI9GDKyuEFMMN2Wg7q0Stq6aqY/sendMessage?chat_id=1336248130&text=%F0%9F%94%84+%D8%A8%D8%AF%D8%A1+%D8%B9%D9%85%D9%84%D9%8A%D8%A9+%D9%81%D8%AA%D8%AD+%D8%B5%D9%81%D9%82%D8%A9+%D8%AC%D8%AF%D9%8A%D8%AF%D8%A9+%D9%84%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1...&parse_mode=HTML HTTP/1.1" 200 433
+2025-05-11 18:35:21,634 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:21,634 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:21,635 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:21,636 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:21,636 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:21,637 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:21,637 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:35:21,638 - mexc_api - DEBUG - Query string for signing: timestamp=1746988521635&recvWindow=5000
+2025-05-11 18:35:21,638 - mexc_api - DEBUG - Generated signature: a2884...
+2025-05-11 18:35:21,640 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:35:21,861 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "POST /api/v3/asset/getUserAsset?timestamp=1746988521635&recvWindow=5000&signature=a2884292d86b565189632a26be9149da5c7cbd03b3f5d0cb595bf1f3a357416d HTTP/1.1" 404 30
+2025-05-11 18:35:21,862 - mexc_api - ERROR - User asset request failed with status code: 404
+2025-05-11 18:35:21,863 - mexc_api - ERROR - Response text: {"code":404,"msg":"Not Found"}
+2025-05-11 18:35:21,864 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:21,864 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:21,864 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:21,865 - mexc_api - INFO - Using API key starting with: mx0vg... for account balance request
+2025-05-11 18:35:21,865 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:21,866 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:21,866 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:21,866 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:35:21,866 - mexc_api - DEBUG - Query string for signing: timestamp=1746988521865&recvWindow=5000
+2025-05-11 18:35:21,867 - mexc_api - DEBUG - Generated signature: 3ecfe...
+2025-05-11 18:35:21,867 - mexc_api - DEBUG - Request URL: https://api.mexc.com/api/v3/account
+2025-05-11 18:35:21,867 - mexc_api - DEBUG - Request params: {'timestamp': '1746988521865', 'recvWindow': '5000', 'signature': '3ecfee275cde8918fc40e632ee57ae6c965c4f9bdfe43e0de7f767b3464dad84'}
+2025-05-11 18:35:21,870 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:35:22,384 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account?timestamp=1746988521865&recvWindow=5000&signature=3ecfee275cde8918fc40e632ee57ae6c965c4f9bdfe43e0de7f767b3464dad84 HTTP/1.1" 200 714
+2025-05-11 18:35:22,385 - mexc_api - INFO - Account balance request successful
+2025-05-11 18:35:22,386 - mexc_api - INFO - تم العثور على رصيد SPOT لـ USDT: 28.76529381
+2025-05-11 18:35:22,387 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:22,387 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:22,388 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:22,389 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:22,389 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:22,389 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:22,390 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:35:22,391 - mexc_api - DEBUG - Query string for signing: timestamp=1746988522388&recvWindow=5000
+2025-05-11 18:35:22,392 - mexc_api - DEBUG - Generated signature: e67bb...
+2025-05-11 18:35:22,393 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:35:22,679 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/asset/get-funding-asset?timestamp=1746988522388&recvWindow=5000&signature=e67bb83c7ffba67e870000b6df1832ca42b130e2017034ba6061e484700709d9 HTTP/1.1" 200 0
+2025-05-11 18:35:22,680 - mexc_api - ERROR - Error getting funding balance for USDT: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:35:22,681 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:22,682 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:22,682 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:22,684 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:35:22,891 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account/balance?timestamp=1746988522682&recvWindow=5000&signature=84ffe72ead7a17facd54f8e36035ccd638b989e033bd81989047592a75e3c50a HTTP/1.1" 200 0
+2025-05-11 18:35:22,891 - mexc_api - ERROR - خطأ في محاولات الطرق البديلة: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:35:22,894 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:22,894 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:22,894 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:22,895 - mexc_api - INFO - Using API key starting with: mx0vg... for total balance request
+2025-05-11 18:35:22,897 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:22,897 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:22,898 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:22,898 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:35:22,898 - mexc_api - DEBUG - Query string for signing: timestamp=1746988522896&recvWindow=5000
+2025-05-11 18:35:22,899 - mexc_api - DEBUG - Generated signature: 86b8a...
+2025-05-11 18:35:22,900 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:35:23,712 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/capital/config/getall?timestamp=1746988522896&recvWindow=5000&signature=86b8a96c3f75b70c407e4865ccca459d7852395938827196bc766e09406f6702 HTTP/1.1" 200 None
+2025-05-11 18:35:24,410 - mexc_api - INFO - تم العثور على رصيد USDT في النوع unknown: 0.0
+2025-05-11 18:35:24,410 - mexc_api - INFO - الرصيد الإجمالي من جميع المحافظ لـ USDT: 0.0
+2025-05-11 18:35:24,419 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:24,419 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:24,420 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:24,421 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:35:24,625 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account/balance?timestamp=1746988524420&recvWindow=5000&signature=c0bb1c2a4e49bd690cd1c39b39e1680661071b643fb09545b8e6a56002cdf580 HTTP/1.1" 200 0
+2025-05-11 18:35:24,625 - mexc_api - ERROR - خطأ في محاولات الطرق البديلة: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:35:24,626 - mexc_api - INFO - الرصيد النهائي لـ USDT: 28.76529381
+2025-05-11 18:35:24,626 - open_single_trade - INFO - 💰 رصيد USDT: 28.76529381
+2025-05-11 18:35:24,628 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:35:24,828 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/ticker/price?symbol=XRPUSDT HTTP/1.1" 200 56
+2025-05-11 18:35:24,829 - open_single_trade - INFO - تم اختيار XRPUSDT بسعر حالي 2.3584
+2025-05-11 18:35:24,829 - open_single_trade - INFO - 📊 مبلغ الشراء: 4.3147940715 USDT, الكمية: 1.8295429407649253 من XRPUSDT
+2025-05-11 18:35:24,829 - open_single_trade - INFO - 🎯 هدف الربح: 2.370192 (0.5%)
+2025-05-11 18:35:24,830 - open_single_trade - INFO - 🛑 وقف الخسارة: 2.334816 (1.0%)
+2025-05-11 18:35:24,830 - open_single_trade - INFO - 🚀 جارٍ تنفيذ أمر الشراء...
+2025-05-11 18:35:24,830 - trading_system - INFO - التحقق من رصيد USDT قبل تنفيذ عملية الشراء...
+2025-05-11 18:35:24,831 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:24,832 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:24,832 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:24,832 - mexc_api - INFO - Using API key starting with: mx0vg... for account balance request
+2025-05-11 18:35:24,833 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:35:24,833 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:35:24,833 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:35:24,834 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:35:24,834 - mexc_api - DEBUG - Query string for signing: timestamp=1746988524832&recvWindow=5000
+2025-05-11 18:35:24,834 - mexc_api - DEBUG - Generated signature: cf9c3...
+2025-05-11 18:35:24,834 - mexc_api - DEBUG - Request URL: https://api.mexc.com/api/v3/account
+2025-05-11 18:35:24,834 - mexc_api - DEBUG - Request params: {'timestamp': '1746988524832', 'recvWindow': '5000', 'signature': 'cf9c3ec5b2c55c6e33cfd4678d956fb7c9b5f63706d50d0e82e04bd00e752447'}
+2025-05-11 18:35:24,836 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:35:25,053 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account?timestamp=1746988524832&recvWindow=5000&signature=cf9c3ec5b2c55c6e33cfd4678d956fb7c9b5f63706d50d0e82e04bd00e752447 HTTP/1.1" 200 714
+2025-05-11 18:35:25,054 - mexc_api - INFO - Account balance request successful
+2025-05-11 18:35:25,054 - trading_system - ERROR - ❌ لم يتم العثور على رصيد USDT. تأكد من صلاحيات API.
+2025-05-11 18:35:25,055 - open_single_trade - INFO - نتيجة التنفيذ (trading_system): False
+2025-05-11 18:35:25,055 - open_single_trade - ERROR - ❌ فشل تنفيذ أمر الشراء
+2025-05-11 18:35:25,057 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.telegram.org:443
+2025-05-11 18:35:25,393 - urllib3.connectionpool - DEBUG - https://api.telegram.org:443 "GET /bot8129105671:AAEW5tgtdAI9GDKyuEFMMN2Wg7q0Stq6aqY/sendMessage?chat_id=1336248130&text=%E2%9D%8C+%D9%81%D8%B4%D9%84+%D9%81%D8%AA%D8%AD+%D8%B5%D9%81%D9%82%D8%A9+%D8%AC%D8%AF%D9%8A%D8%AF%D8%A9+%D8%B9%D9%84%D9%89+XRPUSDT.+%D9%8A%D8%B1%D8%AC%D9%89+%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9+%D8%A7%D9%84%D8%B3%D8%AC%D9%84%D8%A7%D8%AA+%D9%84%D9%85%D8%B2%D9%8A%D8%AF+%D9%85%D9%86+%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84.&parse_mode=HTML HTTP/1.1" 200 571
+2025-05-11 18:35:25,394 - open_single_trade - ERROR - ❌ فشل فتح الصفقة
+2025-05-11 18:35:25,396 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.telegram.org:443
+2025-05-11 18:35:25,735 - urllib3.connectionpool - DEBUG - https://api.telegram.org:443 "GET /bot8129105671:AAEW5tgtdAI9GDKyuEFMMN2Wg7q0Stq6aqY/sendMessage?chat_id=1336248130&text=%E2%9D%8C+%D9%81%D8%B4%D9%84+%D9%81%D8%AA%D8%AD+%D8%A7%D9%84%D8%B5%D9%81%D9%82%D8%A9.+%D9%8A%D8%B1%D8%AC%D9%89+%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9+%D8%A7%D9%84%D8%B3%D8%AC%D9%84%D8%A7%D8%AA+%D9%84%D9%84%D9%85%D8%B2%D9%8A%D8%AF+%D9%85%D9%86+%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84.&parse_mode=HTML HTTP/1.1" 200 531
+2025-05-11 18:39:50,980 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:50,982 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:50,982 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:51,380 - open_single_trade - INFO - محاولة استيراد وظائف التداول من trading_system...
+2025-05-11 18:39:51,381 - open_single_trade - INFO - 🚀 بدء تنفيذ فتح صفقة جديدة...
+2025-05-11 18:39:51,386 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.telegram.org:443
+2025-05-11 18:39:51,738 - urllib3.connectionpool - DEBUG - https://api.telegram.org:443 "GET /bot8129105671:AAEW5tgtdAI9GDKyuEFMMN2Wg7q0Stq6aqY/sendMessage?chat_id=1336248130&text=%F0%9F%94%84+%D8%A8%D8%AF%D8%A1+%D8%B9%D9%85%D9%84%D9%8A%D8%A9+%D9%81%D8%AA%D8%AD+%D8%B5%D9%81%D9%82%D8%A9+%D8%AC%D8%AF%D9%8A%D8%AF%D8%A9+%D9%84%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1...&parse_mode=HTML HTTP/1.1" 200 433
+2025-05-11 18:39:51,739 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:51,739 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:51,739 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:51,740 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:51,740 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:51,740 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:51,740 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:39:51,741 - mexc_api - DEBUG - Query string for signing: timestamp=1746988791739&recvWindow=5000
+2025-05-11 18:39:51,741 - mexc_api - DEBUG - Generated signature: a90cd...
+2025-05-11 18:39:51,742 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:39:52,020 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "POST /api/v3/asset/getUserAsset?timestamp=1746988791739&recvWindow=5000&signature=a90cd381078a56afd4fd6afe75f499db617f8f6f60672fbde2aa9c1c9d824f76 HTTP/1.1" 404 30
+2025-05-11 18:39:52,022 - mexc_api - ERROR - User asset request failed with status code: 404
+2025-05-11 18:39:52,022 - mexc_api - ERROR - Response text: {"code":404,"msg":"Not Found"}
+2025-05-11 18:39:52,023 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:52,023 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:52,023 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:52,023 - mexc_api - INFO - Using API key starting with: mx0vg... for account balance request
+2025-05-11 18:39:52,024 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:52,025 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:52,026 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:52,026 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:39:52,026 - mexc_api - DEBUG - Query string for signing: timestamp=1746988792023&recvWindow=5000
+2025-05-11 18:39:52,026 - mexc_api - DEBUG - Generated signature: ec486...
+2025-05-11 18:39:52,027 - mexc_api - DEBUG - Request URL: https://api.mexc.com/api/v3/account
+2025-05-11 18:39:52,027 - mexc_api - DEBUG - Request params: {'timestamp': '1746988792023', 'recvWindow': '5000', 'signature': 'ec4860b1e7f16a17eb5d9c7dae02de1dff07bc77ea032c466ea06ea01fae2cc4'}
+2025-05-11 18:39:52,029 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:39:52,552 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account?timestamp=1746988792023&recvWindow=5000&signature=ec4860b1e7f16a17eb5d9c7dae02de1dff07bc77ea032c466ea06ea01fae2cc4 HTTP/1.1" 200 714
+2025-05-11 18:39:52,553 - mexc_api - INFO - Account balance request successful
+2025-05-11 18:39:52,554 - mexc_api - INFO - تم العثور على رصيد SPOT لـ USDT: 28.76529381
+2025-05-11 18:39:52,555 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:52,555 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:52,555 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:52,556 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:52,556 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:52,557 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:52,557 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:39:52,557 - mexc_api - DEBUG - Query string for signing: timestamp=1746988792555&recvWindow=5000
+2025-05-11 18:39:52,557 - mexc_api - DEBUG - Generated signature: c7125...
+2025-05-11 18:39:52,559 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:39:53,059 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/asset/get-funding-asset?timestamp=1746988792555&recvWindow=5000&signature=c71252f75cf06d6e61f495f68b54e954d54d183782a3144f95a5a15f0e15c59d HTTP/1.1" 200 0
+2025-05-11 18:39:53,060 - mexc_api - ERROR - Error getting funding balance for USDT: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:39:53,061 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:53,061 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:53,062 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:53,064 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:39:53,273 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account/balance?timestamp=1746988793062&recvWindow=5000&signature=4d00de23f755da374ba44bb8c47e24a71ad49ff63cca016cc2ec99f89ac73023 HTTP/1.1" 200 0
+2025-05-11 18:39:53,275 - mexc_api - ERROR - خطأ في محاولات الطرق البديلة: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:39:53,276 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:53,277 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:53,277 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:53,277 - mexc_api - INFO - Using API key starting with: mx0vg... for total balance request
+2025-05-11 18:39:53,277 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:53,278 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:53,278 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:53,278 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:39:53,278 - mexc_api - DEBUG - Query string for signing: timestamp=1746988793277&recvWindow=5000
+2025-05-11 18:39:53,278 - mexc_api - DEBUG - Generated signature: f29c8...
+2025-05-11 18:39:53,279 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:39:54,095 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/capital/config/getall?timestamp=1746988793277&recvWindow=5000&signature=f29c8fe745a649913bbb0ac28a14702560436cb9359e1e95a031b83fa9d4ea52 HTTP/1.1" 200 None
+2025-05-11 18:39:54,787 - mexc_api - INFO - تم العثور على رصيد USDT في النوع unknown: 0.0
+2025-05-11 18:39:54,788 - mexc_api - INFO - الرصيد الإجمالي من جميع المحافظ لـ USDT: 0.0
+2025-05-11 18:39:54,798 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:39:54,798 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:39:54,799 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:39:54,800 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:39:55,005 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account/balance?timestamp=1746988794799&recvWindow=5000&signature=0991a49af5f976dcf19e2a687f2a7f8d0f35f5b21d411c46a8e1f2204409e96f HTTP/1.1" 200 0
+2025-05-11 18:39:55,006 - mexc_api - ERROR - خطأ في محاولات الطرق البديلة: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:39:55,007 - mexc_api - INFO - الرصيد النهائي لـ USDT: 28.76529381
+2025-05-11 18:39:55,007 - open_single_trade - INFO - 💰 رصيد USDT: 28.76529381
+2025-05-11 18:39:55,009 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:39:55,212 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/ticker/price?symbol=MATICUSDT HTTP/1.1" 400 37
+2025-05-11 18:39:55,213 - mexc_api - ERROR - Price request failed for MATICUSDT: {"msg":"invalid symbol","code":-1121}
+2025-05-11 18:39:55,214 - open_single_trade - INFO - تم اختيار MATICUSDT بسعر حالي None
+2025-05-11 18:39:55,214 - open_single_trade - ERROR - ❌ خطأ في اختيار الرمز: float() argument must be a string or a real number, not 'NoneType'
+2025-05-11 18:39:55,215 - open_single_trade - ERROR - ❌ تعذر الحصول على سعر صحيح للعملة BTCUSDT
+2025-05-11 18:39:55,215 - open_single_trade - ERROR - ❌ فشل فتح الصفقة
+2025-05-11 18:39:55,217 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.telegram.org:443
+2025-05-11 18:39:55,552 - urllib3.connectionpool - DEBUG - https://api.telegram.org:443 "GET /bot8129105671:AAEW5tgtdAI9GDKyuEFMMN2Wg7q0Stq6aqY/sendMessage?chat_id=1336248130&text=%E2%9D%8C+%D9%81%D8%B4%D9%84+%D9%81%D8%AA%D8%AD+%D8%A7%D9%84%D8%B5%D9%81%D9%82%D8%A9.+%D9%8A%D8%B1%D8%AC%D9%89+%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9+%D8%A7%D9%84%D8%B3%D8%AC%D9%84%D8%A7%D8%AA+%D9%84%D9%84%D9%85%D8%B2%D9%8A%D8%AF+%D9%85%D9%86+%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84.&parse_mode=HTML HTTP/1.1" 200 531
+2025-05-11 18:40:40,929 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:40,930 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:40,941 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:41,397 - open_single_trade - INFO - محاولة استيراد وظائف التداول من trading_system...
+2025-05-11 18:40:41,401 - open_single_trade - INFO - 🚀 بدء تنفيذ فتح صفقة جديدة...
+2025-05-11 18:40:41,410 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.telegram.org:443
+2025-05-11 18:40:41,757 - urllib3.connectionpool - DEBUG - https://api.telegram.org:443 "GET /bot8129105671:AAEW5tgtdAI9GDKyuEFMMN2Wg7q0Stq6aqY/sendMessage?chat_id=1336248130&text=%F0%9F%94%84+%D8%A8%D8%AF%D8%A1+%D8%B9%D9%85%D9%84%D9%8A%D8%A9+%D9%81%D8%AA%D8%AD+%D8%B5%D9%81%D9%82%D8%A9+%D8%AC%D8%AF%D9%8A%D8%AF%D8%A9+%D9%84%D9%84%D8%A7%D8%AE%D8%AA%D8%A8%D8%A7%D8%B1...&parse_mode=HTML HTTP/1.1" 200 433
+2025-05-11 18:40:41,759 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:41,759 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:41,760 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:41,761 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:41,761 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:41,762 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:41,762 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:40:41,762 - mexc_api - DEBUG - Query string for signing: timestamp=1746988841760&recvWindow=5000
+2025-05-11 18:40:41,763 - mexc_api - DEBUG - Generated signature: afd4d...
+2025-05-11 18:40:41,767 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:41,984 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "POST /api/v3/asset/getUserAsset?timestamp=1746988841760&recvWindow=5000&signature=afd4de0ddccbbb74ebaf3dc85362aba889b9662b28cac5e61443e3c51fd29544 HTTP/1.1" 404 30
+2025-05-11 18:40:41,985 - mexc_api - ERROR - User asset request failed with status code: 404
+2025-05-11 18:40:41,986 - mexc_api - ERROR - Response text: {"code":404,"msg":"Not Found"}
+2025-05-11 18:40:41,987 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:41,987 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:41,987 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:41,987 - mexc_api - INFO - Using API key starting with: mx0vg... for account balance request
+2025-05-11 18:40:41,988 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:41,988 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:41,988 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:41,988 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:40:41,988 - mexc_api - DEBUG - Query string for signing: timestamp=1746988841987&recvWindow=5000
+2025-05-11 18:40:41,989 - mexc_api - DEBUG - Generated signature: dc1c6...
+2025-05-11 18:40:41,989 - mexc_api - DEBUG - Request URL: https://api.mexc.com/api/v3/account
+2025-05-11 18:40:41,990 - mexc_api - DEBUG - Request params: {'timestamp': '1746988841987', 'recvWindow': '5000', 'signature': 'dc1c6138645483e4c9c3ae758d76ce04b9963fdd53dbcddf048b3905a507b0b3'}
+2025-05-11 18:40:41,991 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:42,202 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account?timestamp=1746988841987&recvWindow=5000&signature=dc1c6138645483e4c9c3ae758d76ce04b9963fdd53dbcddf048b3905a507b0b3 HTTP/1.1" 200 714
+2025-05-11 18:40:42,203 - mexc_api - INFO - Account balance request successful
+2025-05-11 18:40:42,204 - mexc_api - INFO - تم العثور على رصيد SPOT لـ USDT: 28.76529381
+2025-05-11 18:40:42,205 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:42,205 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:42,206 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:42,207 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:42,207 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:42,208 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:42,208 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:40:42,208 - mexc_api - DEBUG - Query string for signing: timestamp=1746988842206&recvWindow=5000
+2025-05-11 18:40:42,208 - mexc_api - DEBUG - Generated signature: 691c0...
+2025-05-11 18:40:42,210 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:42,419 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/asset/get-funding-asset?timestamp=1746988842206&recvWindow=5000&signature=691c0bb684c056caa709f33d185b891b7257cf114a2c8ca8239ab6430e10ba4b HTTP/1.1" 200 0
+2025-05-11 18:40:42,420 - mexc_api - ERROR - Error getting funding balance for USDT: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:40:42,423 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:42,423 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:42,423 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:42,436 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:42,939 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account/balance?timestamp=1746988842423&recvWindow=5000&signature=840efa435cc3b369723f9de8d718ac7fead00a15439940617fc16840d64cf7cf HTTP/1.1" 200 0
+2025-05-11 18:40:42,940 - mexc_api - ERROR - خطأ في محاولات الطرق البديلة: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:40:42,942 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:42,942 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:42,942 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:42,942 - mexc_api - INFO - Using API key starting with: mx0vg... for total balance request
+2025-05-11 18:40:42,943 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:42,943 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:42,943 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:42,943 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:40:42,944 - mexc_api - DEBUG - Query string for signing: timestamp=1746988842942&recvWindow=5000
+2025-05-11 18:40:42,944 - mexc_api - DEBUG - Generated signature: 8b2b5...
+2025-05-11 18:40:42,947 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:43,752 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/capital/config/getall?timestamp=1746988842942&recvWindow=5000&signature=8b2b5f24c808468ca7f341526a5e4d2a004c2f9b0d2d88b2b09b5c9cf06bfe72 HTTP/1.1" 200 None
+2025-05-11 18:40:44,437 - mexc_api - INFO - تم العثور على رصيد USDT في النوع unknown: 0.0
+2025-05-11 18:40:44,438 - mexc_api - INFO - الرصيد الإجمالي من جميع المحافظ لـ USDT: 0.0
+2025-05-11 18:40:44,450 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:44,451 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:44,452 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:44,456 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:44,682 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account/balance?timestamp=1746988844452&recvWindow=5000&signature=389edb483acb672a436ad2f881db11a409795014e8139ba85e9a5492f841aad5 HTTP/1.1" 200 0
+2025-05-11 18:40:44,682 - mexc_api - ERROR - خطأ في محاولات الطرق البديلة: Expecting value: line 1 column 1 (char 0)
+2025-05-11 18:40:44,682 - mexc_api - INFO - الرصيد النهائي لـ USDT: 28.76529381
+2025-05-11 18:40:44,683 - open_single_trade - INFO - 💰 رصيد USDT: 28.76529381
+2025-05-11 18:40:44,684 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:44,904 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/ticker/price?symbol=BTCUSDT HTTP/1.1" 200 59
+2025-05-11 18:40:44,905 - open_single_trade - INFO - ✅ تم اختيار BTCUSDT بسعر حالي 104375.97
+2025-05-11 18:40:44,905 - open_single_trade - INFO - 📊 مبلغ الشراء: 4.3147940715 USDT, الكمية: 4.133896021756731e-05 من BTCUSDT
+2025-05-11 18:40:44,905 - open_single_trade - INFO - 🎯 هدف الربح: 104897.84984999998 (0.5%)
+2025-05-11 18:40:44,906 - open_single_trade - INFO - 🛑 وقف الخسارة: 103332.2103 (1.0%)
+2025-05-11 18:40:44,906 - open_single_trade - INFO - 🚀 جارٍ تنفيذ أمر الشراء...
+2025-05-11 18:40:44,906 - trading_system - INFO - التحقق من رصيد USDT قبل تنفيذ عملية الشراء...
+2025-05-11 18:40:44,907 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:44,907 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:44,907 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:44,907 - mexc_api - INFO - Using API key starting with: mx0vg... for account balance request
+2025-05-11 18:40:44,908 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:44,908 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:44,908 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:44,909 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:40:44,909 - mexc_api - DEBUG - Query string for signing: timestamp=1746988844908&recvWindow=5000
+2025-05-11 18:40:44,909 - mexc_api - DEBUG - Generated signature: af70c...
+2025-05-11 18:40:44,909 - mexc_api - DEBUG - Request URL: https://api.mexc.com/api/v3/account
+2025-05-11 18:40:44,909 - mexc_api - DEBUG - Request params: {'timestamp': '1746988844908', 'recvWindow': '5000', 'signature': 'af70cb52cc3fde5e2e9cc736ee6b616a25b178a4f4c96de80d88f513ac09bc63'}
+2025-05-11 18:40:44,910 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:45,113 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/account?timestamp=1746988844908&recvWindow=5000&signature=af70cb52cc3fde5e2e9cc736ee6b616a25b178a4f4c96de80d88f513ac09bc63 HTTP/1.1" 200 714
+2025-05-11 18:40:45,114 - mexc_api - INFO - Account balance request successful
+2025-05-11 18:40:45,114 - trading_system - INFO - 💰 رصيد USDT المتاح (من balances): 28.76529381
+2025-05-11 18:40:45,114 - trading_system - INFO - 💰 رصيد USDT المتاح للتداول: 28.76529381
+2025-05-11 18:40:45,114 - trading_system - INFO - 🔶 محاولة شراء BTCUSDT: السعر=104375.97, الكمية=4.1e-05, المبلغ=4.3147940715
+2025-05-11 18:40:45,115 - mexc_api - INFO - ⭐⭐⭐ محاولة تنفيذ أمر: BTCUSDT BUY 4.1e-05 MARKET ⭐⭐⭐
+2025-05-11 18:40:45,115 - mexc_api - INFO - صلاحيات API متوفرة. المفتاح يبدأ بـ: mx0vg... وينتهي بـ ...CBPjM
+2025-05-11 18:40:45,116 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:45,116 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:45,116 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:45,117 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:45,385 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/exchangeInfo HTTP/1.1" 200 64041
+2025-05-11 18:40:45,420 - mexc_api - WARNING - Quantity 4.1e-05 is less than minimum 0.0001, adjusting to minimum
+2025-05-11 18:40:45,422 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:45,633 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "GET /api/v3/ticker/24hr?symbol=BTCUSDT HTTP/1.1" 200 238
+2025-05-11 18:40:45,634 - mexc_api - INFO - تم الحصول على السعر الحالي: 104360.01
+2025-05-11 18:40:45,634 - mexc_api - INFO - Order details: BTCUSDT BUY 0.0001 (orig: 0.0001)
+2025-05-11 18:40:45,634 - mexc_api - INFO - Order params: {'symbol': 'BTCUSDT', 'side': 'BUY', 'type': 'MARKET', 'quantity': '0.0001', 'timestamp': '1746988845116', 'recvWindow': '5000'}
+2025-05-11 18:40:45,635 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:40:45,635 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:40:45,636 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:40:45,637 - mexc_api - INFO - Signing request with API_KEY starting with: mx0...
+2025-05-11 18:40:45,637 - mexc_api - DEBUG - Query string for signing: symbol=BTCUSDT&side=BUY&type=MARKET&quantity=0.0001&timestamp=1746988845116&recvWindow=5000
+2025-05-11 18:40:45,637 - mexc_api - DEBUG - Generated signature: 83a23...
+2025-05-11 18:40:45,639 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.mexc.com:443
+2025-05-11 18:40:45,847 - urllib3.connectionpool - DEBUG - https://api.mexc.com:443 "POST /api/v3/order?symbol=BTCUSDT&side=BUY&type=MARKET&quantity=0.0001&timestamp=1746988845116&recvWindow=5000&signature=83a235792ad89239b956d2640e171c1c52bf75a02f911ba4b97456d7def73ec7 HTTP/1.1" 400 45
+2025-05-11 18:40:45,848 - mexc_api - INFO - Place order response status: 400
+2025-05-11 18:40:45,848 - mexc_api - ERROR - Order request failed: {"code":10007,"msg":"symbol not support api"}
+2025-05-11 18:40:45,852 - trading_system - ERROR - ❌ فشل أمر الشراء: BTCUSDT - {'code': 10007, 'msg': 'symbol not support api'}
+2025-05-11 18:40:45,852 - open_single_trade - INFO - نتيجة التنفيذ (trading_system): False
+2025-05-11 18:40:45,852 - open_single_trade - ERROR - ❌ فشل تنفيذ أمر الشراء
+2025-05-11 18:40:45,854 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.telegram.org:443
+2025-05-11 18:40:46,194 - urllib3.connectionpool - DEBUG - https://api.telegram.org:443 "GET /bot8129105671:AAEW5tgtdAI9GDKyuEFMMN2Wg7q0Stq6aqY/sendMessage?chat_id=1336248130&text=%E2%9D%8C+%D9%81%D8%B4%D9%84+%D9%81%D8%AA%D8%AD+%D8%B5%D9%81%D9%82%D8%A9+%D8%AC%D8%AF%D9%8A%D8%AF%D8%A9+%D8%B9%D9%84%D9%89+BTCUSDT.+%D9%8A%D8%B1%D8%AC%D9%89+%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9+%D8%A7%D9%84%D8%B3%D8%AC%D9%84%D8%A7%D8%AA+%D9%84%D9%85%D8%B2%D9%8A%D8%AF+%D9%85%D9%86+%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84.&parse_mode=HTML HTTP/1.1" 200 571
+2025-05-11 18:40:46,194 - open_single_trade - ERROR - ❌ فشل فتح الصفقة
+2025-05-11 18:40:46,196 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): api.telegram.org:443
+2025-05-11 18:40:46,538 - urllib3.connectionpool - DEBUG - https://api.telegram.org:443 "GET /bot8129105671:AAEW5tgtdAI9GDKyuEFMMN2Wg7q0Stq6aqY/sendMessage?chat_id=1336248130&text=%E2%9D%8C+%D9%81%D8%B4%D9%84+%D9%81%D8%AA%D8%AD+%D8%A7%D9%84%D8%B5%D9%81%D9%82%D8%A9.+%D9%8A%D8%B1%D8%AC%D9%89+%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9+%D8%A7%D9%84%D8%B3%D8%AC%D9%84%D8%A7%D8%AA+%D9%84%D9%84%D9%85%D8%B2%D9%8A%D8%AF+%D9%85%D9%86+%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84.&parse_mode=HTML HTTP/1.1" 200 531

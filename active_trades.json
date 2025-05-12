@@ -1,0 +1,1276 @@
+{
+  "open": [
+    {
+      "symbol": "LEVERUSDT",
+      "quantity": 2.74,
+      "entry_price": 0.0006747,
+      "timestamp": 1747010220714,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "ENAUSDT",
+      "quantity": 0.02,
+      "entry_price": 0.4196,
+      "timestamp": 1747010220941,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "MXUSDT",
+      "quantity": 0.00402041,
+      "entry_price": 2.694,
+      "timestamp": 1747010221402,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "WIFUSDT",
+      "quantity": 0.01,
+      "entry_price": 0.949,
+      "timestamp": 1747010221630,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "APTUSDT",
+      "quantity": 0.03,
+      "entry_price": 5.966,
+      "timestamp": 1747010221852,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "XOXNOUSDT",
+      "quantity": 0.98,
+      "entry_price": 0.04216,
+      "timestamp": 1747010222323,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "ADAUSDT",
+      "quantity": 6.153089,
+      "entry_price": 0.8126,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ],
+      "timestamp": 1747012828887,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550420990501367808071",
+      "order_type": "MARKET"
+    },
+    {
+      "symbol": "DOTUSDT",
+      "quantity": 0.32,
+      "entry_price": 5.086,
+      "timestamp": 1747013547362,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "XRPUSDT",
+      "quantity": 2.1,
+      "entry_price": 2.3786,
+      "timestamp": 1747013547723,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "symbol": "BNBUSDT",
+      "quantity": 0.007669,
+      "entry_price": 651.99,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        },
+        {
+          "percent": 0.01,
+          "hit": false
+        }
+      ],
+      "timestamp": 1747013553237,
+      "status": "OPEN",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550424027441709061071",
+      "order_type": "MARKET"
+    }
+  ],
+  "closed": [
+    {
+      "symbol": "SOLUSDT",
+      "quantity": 0.034427,
+      "entry_price": 174.28,
+      "take_profit": 174.288714,
+      "stop_loss": 174.262572,
+      "timestamp": 1746968863472,
+      "status": "CLOSED",
+      "api_executed": true,
+      "orderId": "C02__550236596520124417071",
+      "order_type": "MARKET",
+      "api_confirmed": false,
+      "close_reason": "FAKE_TRADE_CLEANUP",
+      "close_timestamp": 1746969368280
+    },
+    {
+      "symbol": "LINKUSDT",
+      "quantity": 0.357782,
+      "entry_price": 16.77,
+      "take_profit": 16.7708385,
+      "stop_loss": 16.768323,
+      "timestamp": 1746968864794,
+      "status": "CLOSED",
+      "api_executed": true,
+      "orderId": "C02__550236602039844865071",
+      "order_type": "MARKET",
+      "api_confirmed": false,
+      "close_reason": "FAKE_TRADE_CLEANUP",
+      "close_timestamp": 1746969368280
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "quantity": 25.550398,
+      "entry_price": 0.23483,
+      "take_profit": 0.23484174,
+      "stop_loss": 0.23480652,
+      "timestamp": 1746968865301,
+      "status": "CLOSED",
+      "api_executed": true,
+      "orderId": "C02__550236604111826946071",
+      "order_type": "MARKET",
+      "api_confirmed": false,
+      "close_reason": "FAKE_TRADE_CLEANUP",
+      "close_timestamp": 1746969368280
+    },
+    {
+      "symbol": "FILUSDT",
+      "quantity": 1.892148,
+      "entry_price": 3.171,
+      "take_profit": 3.17115855,
+      "stop_loss": 3.1706829,
+      "timestamp": 1746968865931,
+      "status": "CLOSED",
+      "api_executed": true,
+      "orderId": "C02__550236606817165312071",
+      "order_type": "MARKET",
+      "api_confirmed": false,
+      "close_reason": "FAKE_TRADE_CLEANUP",
+      "close_timestamp": 1746969368280
+    },
+    {
+      "symbol": "BNBUSDT",
+      "quantity": 0.009122,
+      "entry_price": 657.73,
+      "take_profit": 657.7628865,
+      "stop_loss": 657.664227,
+      "timestamp": 1746969370985,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550238721958522881071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP",
+      "close_timestamp": 1746969616953
+    },
+    {
+      "symbol": "LTCUSDT",
+      "quantity": 0.059073,
+      "entry_price": 101.57,
+      "take_profit": 101.5750785,
+      "stop_loss": 101.559843,
+      "timestamp": 1746969374120,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550238734017155074071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP",
+      "close_timestamp": 1746969616953
+    },
+    {
+      "symbol": "DOTUSDT",
+      "quantity": 0.196117,
+      "entry_price": 5.099,
+      "take_profit": 5.09925495,
+      "stop_loss": 5.0984901,
+      "timestamp": 1746969627705,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550239797591982080071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP",
+      "close_timestamp": 1746969908784
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "quantity": 4.271496,
+      "entry_price": 0.23411,
+      "take_profit": 0.23412171,
+      "stop_loss": 0.23408659,
+      "timestamp": 1746969630878,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550239812045561856071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP",
+      "close_timestamp": 1746969909472
+    },
+    {
+      "symbol": "FILUSDT",
+      "quantity": 0.316356,
+      "entry_price": 3.161,
+      "take_profit": 3.176805,
+      "stop_loss": 3.157839,
+      "timestamp": 1746969629281,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550239805418520578071",
+      "order_type": "MARKET",
+      "close_price": 2.969,
+      "close_timestamp": 1746970322841,
+      "profit_loss": -6.074027206580201,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "LINKUSDT",
+      "quantity": 0.2,
+      "entry_price": 17.38,
+      "take_profit": 17.466899999999995,
+      "stop_loss": 17.36262,
+      "timestamp": 1746921109000,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550036298245619712071",
+      "order_type": "MARKET",
+      "close_price": 15.76,
+      "close_timestamp": 1746970323989,
+      "profit_loss": -9.321058688147293,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "LINKUSDT",
+      "quantity": 0.5,
+      "entry_price": 17.37,
+      "take_profit": 17.45685,
+      "stop_loss": 17.35263,
+      "timestamp": 1746921004000,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550035861278879746071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970324597,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "LINKUSDT",
+      "quantity": 0.5,
+      "entry_price": 17.37,
+      "take_profit": 17.45685,
+      "stop_loss": 17.35263,
+      "timestamp": 1746920984000,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550035774007943170071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970325439,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "LINKUSDT",
+      "quantity": 0.5,
+      "entry_price": 17.37,
+      "take_profit": 17.45685,
+      "stop_loss": 17.35263,
+      "timestamp": 1746920963000,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550035688171544577071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970326302,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "ATOMUSDT",
+      "quantity": 0.19204916458613405,
+      "entry_price": 5.207,
+      "take_profit": 5.233034999999999,
+      "stop_loss": 5.2017929999999994,
+      "timestamp": 1746970329027,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550242741360050176071",
+      "order_type": "MARKET",
+      "close_price": 4.94,
+      "close_timestamp": 1746970379404,
+      "profit_loss": -5.127712694449769,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "quantity": 0.00040133242364650645,
+      "entry_price": 2491.7,
+      "take_profit": 2504.1584999999995,
+      "stop_loss": 2489.2083,
+      "timestamp": 1746970330696,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970380543,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "AVAXUSDT",
+      "quantity": 0.040766408479412965,
+      "entry_price": 24.53,
+      "take_profit": 24.652649999999998,
+      "stop_loss": 24.505470000000003,
+      "timestamp": 1746970382994,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550242967676264449071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970561978,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "APTUSDT",
+      "quantity": 0.16960651289009498,
+      "entry_price": 5.896,
+      "take_profit": 5.925479999999999,
+      "stop_loss": 5.890104,
+      "timestamp": 1746970384030,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550242973233758208071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970562921,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "DOTUSDT",
+      "quantity": 0.19817677368212444,
+      "entry_price": 5.046,
+      "take_profit": 5.07123,
+      "stop_loss": 5.040954,
+      "timestamp": 1746970385209,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550242977826500610071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970564104,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "NEARUSDT",
+      "quantity": 0.31938677738741617,
+      "entry_price": 3.131,
+      "take_profit": 3.1466549999999995,
+      "stop_loss": 3.1278689999999996,
+      "timestamp": 1746970385878,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550242981035134976071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970565235,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "ATOMUSDT",
+      "quantity": 0.19234468166955185,
+      "entry_price": 5.199,
+      "take_profit": 5.224994999999999,
+      "stop_loss": 5.193801,
+      "timestamp": 1746970386346,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550242982977105922071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970566418,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "ADAUSDT",
+      "quantity": 6.275888038157399,
+      "entry_price": 0.7967,
+      "take_profit": 0.8006834999999999,
+      "stop_loss": 0.7959033,
+      "timestamp": 1746970569206,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550243748756353024071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970585311,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "BTCUSDT",
+      "quantity": 4.790034582133669e-05,
+      "entry_price": 104383.38,
+      "take_profit": 104905.29689999999,
+      "stop_loss": 104278.99662,
+      "timestamp": 1746970587728,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970627204,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "NEARUSDT",
+      "quantity": 1.592356687898089,
+      "entry_price": 3.14,
+      "take_profit": 3.1557,
+      "stop_loss": 3.13686,
+      "timestamp": 1746970588692,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550243831627415553071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970628680,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "AVAXUSDT",
+      "quantity": 0.20341741253051263,
+      "entry_price": 24.58,
+      "take_profit": 24.702899999999996,
+      "stop_loss": 24.555419999999998,
+      "timestamp": 1746970589371,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550243834576011264071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970629526,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "SOLUSDT",
+      "quantity": 0.028963679545849507,
+      "entry_price": 172.63,
+      "take_profit": 173.49314999999999,
+      "stop_loss": 172.45737,
+      "timestamp": 1746970590054,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550243837428121602071",
+      "order_type": "MARKET",
+      "close_price": 163.97,
+      "close_timestamp": 1746970630829,
+      "profit_loss": -5.016509297341132,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "ATOMUSDT",
+      "quantity": 0.9593246354566386,
+      "entry_price": 5.212,
+      "take_profit": 5.238059999999999,
+      "stop_loss": 5.2067879999999995,
+      "timestamp": 1746970590735,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550243840234098692071",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970631943,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "quantity": 0.0020060421991037005,
+      "entry_price": 2492.47,
+      "take_profit": 2504.9323499999996,
+      "stop_loss": 2489.9775299999997,
+      "timestamp": 1746970634808,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "",
+      "order_type": "MARKET",
+      "close_price": 0.0,
+      "close_timestamp": 1746970648368,
+      "profit_loss": 0,
+      "close_reason": "MANUAL_CLOSE"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "quantity": 0.0020040883402140364,
+      "entry_price": 2494.9,
+      "take_profit": 2507.3745,
+      "stop_loss": 2492.4051,
+      "timestamp": 1746970652536,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE",
+      "close_timestamp": 1746972602135,
+      "close_price": 2494.9,
+      "profit_loss": 0
+    },
+    {
+      "symbol": "DOTUSDT",
+      "quantity": 0.9883376161296699,
+      "entry_price": 5.059,
+      "take_profit": 5.084295,
+      "stop_loss": 5.053941,
+      "timestamp": 1746970651014,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550244091812696066071",
+      "order_type": "MARKET",
+      "last_verified": 1746972602135,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "close_price": 0.0,
+      "close_timestamp": 1746972619999,
+      "profit_loss": -0.45463530341965946,
+      "close_reason": "STOP_LOSS"
+    },
+    {
+      "symbol": "NEARUSDT",
+      "quantity": 1.589319771137953,
+      "entry_price": 3.146,
+      "take_profit": 3.1617299999999995,
+      "stop_loss": 3.142854,
+      "timestamp": 1746970652090,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550244097537875970071",
+      "order_type": "MARKET",
+      "last_verified": 1746972602135,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "close_price": 0.0,
+      "close_timestamp": 1746972620852,
+      "profit_loss": -0.6039415130324262,
+      "close_reason": "STOP_LOSS"
+    },
+    {
+      "symbol": "BNBUSDT",
+      "quantity": 0.007652514616302918,
+      "entry_price": 653.38,
+      "take_profit": 656.6469,
+      "stop_loss": 652.72662,
+      "timestamp": 1746970653222,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550244102310993920071",
+      "order_type": "MARKET",
+      "last_verified": 1746972602135,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "close_price": 0.0,
+      "close_timestamp": 1746972621715,
+      "profit_loss": -0.24488046772169683,
+      "close_reason": "STOP_LOSS"
+    },
+    {
+      "symbol": "ATOMUSDT",
+      "quantity": 0.9593246354566386,
+      "entry_price": 5.212,
+      "take_profit": 5.238059999999999,
+      "stop_loss": 5.2067879999999995,
+      "timestamp": 1746970654222,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550244106463358980071",
+      "order_type": "MARKET",
+      "last_verified": 1746972602135,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "close_price": 0.0,
+      "close_timestamp": 1746972622819,
+      "profit_loss": -0.19186492709132363,
+      "close_reason": "STOP_LOSS"
+    },
+    {
+      "symbol": "DOTUSDT",
+      "quantity": 0.9932459276916965,
+      "entry_price": 5.034,
+      "stop_loss": -0.1,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1746972639084,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550252431691243524071",
+      "order_type": "MARKET",
+      "last_verified": 1746972650628,
+      "close_price": 0.0,
+      "close_timestamp": 1746972661005,
+      "profit_loss": -0.1191895113230081,
+      "close_reason": "STOP_LOSS"
+    },
+    {
+      "symbol": "NEARUSDT",
+      "quantity": 1.598976654940838,
+      "entry_price": 3.127,
+      "stop_loss": -0.1,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1746972637431,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "orderId": "C02__550252424758087680071",
+      "order_type": "MARKET",
+      "last_verified": 1746972670609,
+      "close_price": 0.0,
+      "close_timestamp": 1746972671948,
+      "profit_loss": -0.12791813239525293,
+      "close_reason": "STOP_LOSS"
+    },
+    {
+      "symbol": "XRPUSDT",
+      "quantity": 2.114165,
+      "entry_price": 2.365,
+      "stop_loss": -0.1,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1746994130388,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550342562142007296071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP: \u0644\u0627 \u064a\u0648\u062c\u062f \u0623\u0645\u0631 \u0645\u0641\u062a\u0648\u062d \u0648\u0644\u0627 \u0631\u0635\u064a\u062f \u0644\u0644\u0639\u0645\u0644\u0629",
+      "close_timestamp": 1746994494908
+    },
+    {
+      "symbol": "BNBUSDT",
+      "quantity": 0.007665,
+      "entry_price": 652.3,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1746994919142,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550345870604771328071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP: \u0644\u0627 \u064a\u0648\u062c\u062f \u0623\u0645\u0631 \u0645\u0641\u062a\u0648\u062d \u0648\u0644\u0627 \u0631\u0635\u064a\u062f \u0644\u0644\u0639\u0645\u0644\u0629",
+      "close_timestamp": 1747004576681
+    },
+    {
+      "symbol": "SOLUSDT",
+      "quantity": 0.028962,
+      "entry_price": 172.64,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1746994923055,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550345888216674305071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP: \u0644\u0627 \u064a\u0648\u062c\u062f \u0623\u0645\u0631 \u0645\u0641\u062a\u0648\u062d \u0648\u0644\u0627 \u0631\u0635\u064a\u062f \u0644\u0644\u0639\u0645\u0644\u0629",
+      "close_timestamp": 1747004576681
+    },
+    {
+      "symbol": "XRPUSDT",
+      "quantity": 2.111397,
+      "entry_price": 2.3681,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1747004582917,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550386404320874499071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP: \u0644\u0627 \u064a\u0648\u062c\u062f \u0623\u0645\u0631 \u0645\u0641\u062a\u0648\u062d \u0648\u0644\u0627 \u0631\u0635\u064a\u062f \u0644\u0644\u0639\u0645\u0644\u0629",
+      "close_timestamp": 1747004737706
+    },
+    {
+      "symbol": "XRPUSDT",
+      "quantity": 2.108459,
+      "entry_price": 2.3714,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1747004742295,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550387072859389952071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP: \u0644\u0627 \u064a\u0648\u062c\u062f \u0623\u0645\u0631 \u0645\u0641\u062a\u0648\u062d \u0648\u0644\u0627 \u0631\u0635\u064a\u062f \u0644\u0644\u0639\u0645\u0644\u0629",
+      "close_timestamp": 1747005633883
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "quantity": 21.595474,
+      "entry_price": 0.23153,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1747006412465,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550394078005583872071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP: \u0644\u0627 \u064a\u0648\u062c\u062f \u0623\u0645\u0631 \u0645\u0641\u062a\u0648\u062d \u0648\u0644\u0627 \u0631\u0635\u064a\u062f \u0644\u0644\u0639\u0645\u0644\u0629",
+      "close_timestamp": 1747008586800
+    },
+    {
+      "symbol": "ADAUSDT",
+      "quantity": 6.228201,
+      "entry_price": 0.8028,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1747006417617,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550394098519908352071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP: \u0644\u0627 \u064a\u0648\u062c\u062f \u0623\u0645\u0631 \u0645\u0641\u062a\u0648\u062d \u0648\u0644\u0627 \u0631\u0635\u064a\u062f \u0644\u0644\u0639\u0645\u0644\u0629",
+      "close_timestamp": 1747008586800
+    },
+    {
+      "symbol": "LTCUSDT",
+      "quantity": 0.05005,
+      "entry_price": 99.9,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1747006421334,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550394115309740032071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP: \u0644\u0627 \u064a\u0648\u062c\u062f \u0623\u0645\u0631 \u0645\u0641\u062a\u0648\u062d \u0648\u0644\u0627 \u0631\u0635\u064a\u062f \u0644\u0644\u0639\u0645\u0644\u0629",
+      "close_timestamp": 1747008586800
+    },
+    {
+      "symbol": "DOTUSDT",
+      "quantity": 0.983671,
+      "entry_price": 5.083,
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.5,
+          "hit": false
+        },
+        {
+          "percent": 1.0,
+          "hit": false
+        },
+        {
+          "percent": 2.0,
+          "hit": false
+        }
+      ],
+      "timestamp": 1747006425357,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": false,
+      "orderId": "C02__550394131000594432071",
+      "order_type": "MARKET",
+      "close_reason": "FAKE_TRADE_CLEANUP: \u0644\u0627 \u064a\u0648\u062c\u062f \u0623\u0645\u0631 \u0645\u0641\u062a\u0648\u062d \u0648\u0644\u0627 \u0631\u0635\u064a\u062f \u0644\u0644\u0639\u0645\u0644\u0629",
+      "close_timestamp": 1747008586800
+    },
+    {
+      "symbol": "ADAUSDT",
+      "quantity": 6.2,
+      "entry_price": 0.8167,
+      "timestamp": 1747010220487,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": true
+        },
+        {
+          "percent": 0.01,
+          "hit": true
+        },
+        {
+          "percent": 0.01,
+          "hit": true
+        }
+      ],
+      "close_reason": "all_targets_hit",
+      "close_timestamp": 1747011807750,
+      "sell_price": "0.7764",
+      "sell_time": 1747011804638
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "quantity": 21.6,
+      "entry_price": 0.2372,
+      "timestamp": 1747010222071,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": true
+        },
+        {
+          "percent": 0.01,
+          "hit": true
+        },
+        {
+          "percent": 0.01,
+          "hit": true
+        }
+      ],
+      "close_reason": "all_targets_hit",
+      "close_timestamp": 1747011883489,
+      "sell_price": "0.22549",
+      "sell_time": 1747011880241
+    },
+    {
+      "symbol": "LTCUSDT",
+      "quantity": 0.1,
+      "entry_price": 101.41,
+      "timestamp": 1747010222536,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": true
+        },
+        {
+          "percent": 0.01,
+          "hit": true
+        },
+        {
+          "percent": 0.01,
+          "hit": true
+        }
+      ],
+      "close_reason": "all_targets_hit",
+      "close_timestamp": 1747012074917,
+      "sell_price": "96.51",
+      "sell_time": 1747012072012
+    },
+    {
+      "symbol": "DOTUSDT",
+      "quantity": 1.03,
+      "entry_price": 5.143,
+      "timestamp": 1747010221158,
+      "status": "CLOSED",
+      "api_executed": true,
+      "api_confirmed": true,
+      "order_type": "MARKET",
+      "stop_loss": -3.0,
+      "take_profit_targets": [
+        {
+          "percent": 0.01,
+          "hit": true
+        },
+        {
+          "percent": 0.01,
+          "hit": true
+        },
+        {
+          "percent": 0.01,
+          "hit": true
+        }
+      ],
+      "close_reason": "all_targets_hit",
+      "close_timestamp": 1747012222167,
+      "sell_price": "4.892",
+      "sell_time": 1747012218788
+    }
+  ]
+}

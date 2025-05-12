@@ -1,0 +1,9 @@
+[2025-05-11 17:49:20 +0000] [2775] [INFO] Starting gunicorn 23.0.0
+[2025-05-11 17:49:20 +0000] [2775] [INFO] Listening at: http://0.0.0.0:5003 (2775)
+[2025-05-11 17:49:20 +0000] [2775] [INFO] Using worker: sync
+[2025-05-11 17:49:20 +0000] [2781] [INFO] Booting worker with pid: 2781
+INFO:config:MEXC_API_KEY configured: Yes
+INFO:config:MEXC_API_SECRET configured: Yes
+INFO:config:MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+INFO:debug_main:✅ تم استيراد app.trading_bot بنجاح
+INFO:debug_main:✅ تم استيراد app.trading_system بنجاح

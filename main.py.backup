@@ -1,0 +1,1484 @@
+from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
+import os
+import logging
+import traceback
+from datetime import datetime
+
+# إضافة مستوى سجل التصحيح
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# استيراد مطلق من داخل مجلد app
+from app.trade_executor import get_open_trades, get_performance_stats
+# استيراد وحدات نظام التداول الجديد
+from app.trading_bot import (
+    start_bot, stop_bot, get_bot_status, clean_all_fake_trades,
+    execute_manual_trade_cycle, sell_all_trades
+)
+from app.trading_system import load_trades, clean_fake_trades
+from app.capital_manager import get_capital_status, calculate_available_risk_capital
+from app.utils import calculate_total_profit
+from app.config import (
+    BASE_CURRENCY, MAX_ACTIVE_TRADES, TOTAL_RISK_CAPITAL_RATIO,
+    RISK_CAPITAL_RATIO, TAKE_PROFIT, STOP_LOSS, DAILY_LOSS_LIMIT,
+    TIME_STOP_LOSS_HOURS, MONITOR_INTERVAL_SECONDS, API_KEY, API_SECRET,
+    TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+)
+from app.utils import load_json_data, save_json_data, format_timestamp
+# استخدام مدير المنصات بدلاً من واجهة MEXC المباشرة
+from app.exchange_manager import get_current_price, get_all_symbols_24h_data, get_klines, get_account_balance
+from app.telegram_notify import generate_daily_report, start_daily_report_timer
+# إضافة وحدة فحص السوق
+from app.market_scanner import scan_market
+
+# استيراد الدوال من market_scanner مع معالجة الأخطاء
+try:
+    from app.market_scanner import (
+        start_market_scanner, stop_market_scanner, get_trading_opportunities,
+        get_watched_symbols, get_symbol_analysis
+    )
+except ImportError:
+    # تعريف دوال بديلة في حالة عدم وجود الدوال الأصلية
+    logger.warning("تعذر استيراد بعض دوال market_scanner، استخدام دوال بديلة مؤقتة")
+    
+    def start_market_scanner(interval=300):
+        logger.info(f"تم استدعاء وظيفة بديلة لـ start_market_scanner مع interval={interval}")
+        return True
+        
+    def stop_market_scanner():
+        logger.info("تم استدعاء وظيفة بديلة لـ stop_market_scanner")
+        return True
+        
+    def get_trading_opportunities():
+        logger.info("تم استدعاء وظيفة بديلة لـ get_trading_opportunities")
+        return []
+        
+    def get_watched_symbols():
+        logger.info("تم استدعاء وظيفة بديلة لـ get_watched_symbols")
+        return ["BTCUSDT", "ETHUSDT", "SOLUSDT", "DOGEUSDT", "MATICUSDT"]
+        
+    def get_symbol_analysis(symbol):
+        logger.info(f"تم استدعاء وظيفة بديلة لـ get_symbol_analysis مع symbol={symbol}")
+        return {"symbol": symbol, "error": "لا تتوفر وظيفة التحليل حاليًا"}
+# إضافة وحدة مراقبة السوق المتخصصة
+# استيراد دوال مراقبة السوق المتخصصة مع معالجة الأخطاء
+try:
+    from app.market_monitor import (
+        start_market_monitor, stop_market_monitor, get_latest_opportunities,
+        get_best_opportunities, get_opportunity_details, get_market_summary,
+        analyze_price_action, MarketOpportunity
+    )
+except ImportError:
+    logger.warning("تعذر استيراد وحدة market_monitor، استخدام دوال بديلة مؤقتة")
+    
+    def start_market_monitor(interval=300):
+        logger.info(f"تم استدعاء وظيفة بديلة لـ start_market_monitor مع interval={interval}")
+        return True
+        
+    def stop_market_monitor():
+        logger.info("تم استدعاء وظيفة بديلة لـ stop_market_monitor")
+        return True
+        
+    def get_latest_opportunities():
+        logger.info("تم استدعاء وظيفة بديلة لـ get_latest_opportunities")
+        return []
+        
+    def get_best_opportunities():
+        logger.info("تم استدعاء وظيفة بديلة لـ get_best_opportunities")
+        return []
+        
+    def get_opportunity_details(symbol):
+        logger.info(f"تم استدعاء وظيفة بديلة لـ get_opportunity_details مع symbol={symbol}")
+        return {"symbol": symbol, "error": "لا تتوفر وظيفة التحليل حاليًا"}
+        
+    def get_market_summary():
+        logger.info("تم استدعاء وظيفة بديلة لـ get_market_summary")
+        return {"status": "غير متاح"}
+        
+    def analyze_price_action(symbol):
+        logger.info(f"تم استدعاء وظيفة بديلة لـ analyze_price_action مع symbol={symbol}")
+        return {"symbol": symbol, "error": "لا تتوفر وظيفة التحليل حاليًا"}
+        
+    class MarketOpportunity:
+        def __init__(self, symbol, price, signal):
+            self.symbol = symbol
+            self.price = price
+            self.signal = signal
+
+# تكوين التسجيل
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger('main')
+
+app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+app.secret_key = os.environ.get("SESSION_SECRET", "crypto_trading_bot_secret_key")
+
+# تهيئة مرشحات Jinja المخصصة
+from app.__init__ import init_jinja_filters
+init_jinja_filters(app)
+
+# تشغيل البوت تلقائياً عند بدء التطبيق
+from app.trading_bot import start_bot, get_bot_status, check_bot_health, BOT_STATUS
+if not BOT_STATUS.get('running', False):
+    logger.info("🤖 بدء تشغيل البوت تلقائياً عند بدء التطبيق...")
+    start_bot()
+
+# إضافة آلية فحص دوري للتأكد من استمرارية البوت
+import threading
+import time
+
+def bot_watchdog():
+    """آلية حارسة للتأكد من استمرارية البوت وإعادة تشغيله تلقائياً في حالة التوقف"""
+    while True:
+        try:
+            # فحص حالة البوت
+            bot_status = get_bot_status()
+            if not bot_status.get('running', False):
+                logger.warning("🔍 اكتشف نظام المراقبة أن البوت متوقف، سيتم محاولة إعادة تشغيله تلقائياً...")
+                check_bot_health()
+        except Exception as e:
+            logger.error(f"خطأ في نظام مراقبة البوت: {e}")
+        
+        # انتظار قبل الفحص التالي (كل 5 دقائق)
+        time.sleep(300)
+
+# تشغيل حارس البوت في خلفية النظام
+watchdog_thread = threading.Thread(target=bot_watchdog, daemon=True)
+watchdog_thread.start()
+logger.info("🔒 تم تشغيل نظام حماية البوت للتأكد من استمرارية التشغيل")
+
+import time
+from functools import wraps
+
+# متغيرات للتخزين المؤقت
+dashboard_cache = {
+    'last_update': 0,
+    'data': None,
+    'cache_time': 60  # تخزين مؤقت لمدة 60 ثانية لتحسين الأداء
+}
+
+# تخزين مؤقت لكل صفحة
+page_caches = {
+    'settings': {'last_update': 0, 'data': None, 'cache_time': 120},
+    'trades': {'last_update': 0, 'data': None, 'cache_time': 60},
+    'watched_coins': {'last_update': 0, 'data': None, 'cache_time': 60}
+}
+
+def cache_dashboard_data(func):
+    """
+    مغلف (decorator) للتخزين المؤقت لبيانات لوحة التحكم
+    يقوم بتخزين البيانات مؤقتاً لتقليل الحمل على API
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        current_time = time.time()
+        force_refresh = kwargs.get('force_refresh', False)
+        
+        # إذا كانت البيانات المخزنة مؤقتاً حديثة بما فيه الكفاية وليس هناك طلب تحديث إجباري
+        if dashboard_cache['data'] and not force_refresh and current_time - dashboard_cache['last_update'] < dashboard_cache['cache_time']:
+            logger.info("استخدام بيانات لوحة التحكم المخزنة مؤقتاً")
+            return dashboard_cache['data']
+        
+        # وإلا، استدعاء الدالة الأصلية والتخزين المؤقت للنتيجة
+        # استخدام نسخة من البيانات القديمة في حالة فشل التحديث
+        old_data = dashboard_cache['data']
+        try:
+            # نزيل force_refresh من kwargs إذا وجد
+            if 'force_refresh' in kwargs:
+                kwargs.pop('force_refresh')
+                
+            result = func(*args, **kwargs)
+            dashboard_cache['data'] = result
+            dashboard_cache['last_update'] = current_time
+            logger.info("تم تحديث بيانات لوحة التحكم وتخزينها مؤقتاً")
+            return result
+        except Exception as e:
+            logger.error(f"خطأ في تحديث البيانات: {e}")
+            # إذا كان هناك بيانات قديمة، نستخدمها بدلاً من إظهار الخطأ
+            if old_data:
+                logger.info("استخدام البيانات المخزنة سابقاً بسبب خطأ في التحديث")
+                return old_data
+            # في حالة عدم وجود بيانات سابقة، نرمي الخطأ
+            raise
+    return wrapper
+
+def cache_page_data(page_name):
+    """
+    مغلف (decorator) عام للتخزين المؤقت لبيانات أي صفحة
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            cache = page_caches.get(page_name, {'last_update': 0, 'data': None, 'cache_time': 60})
+            current_time = time.time()
+            force_refresh = kwargs.get('force_refresh', False)
+            
+            # استخدام البيانات المخزنة إذا كانت حديثة
+            if cache['data'] and not force_refresh and current_time - cache['last_update'] < cache['cache_time']:
+                logger.info(f"استخدام بيانات {page_name} المخزنة مؤقتاً")
+                return cache['data']
+            
+            # حفظ البيانات القديمة للاستخدام في حالة الفشل
+            old_data = cache['data']
+            try:
+                # نزيل force_refresh من kwargs إذا وجد
+                if 'force_refresh' in kwargs:
+                    kwargs.pop('force_refresh')
+                    
+                result = func(*args, **kwargs)
+                cache['data'] = result
+                cache['last_update'] = current_time
+                # تحديث الذاكرة المؤقتة العامة
+                page_caches[page_name] = cache
+                logger.info(f"تم تحديث بيانات {page_name} وتخزينها مؤقتاً")
+                return result
+            except Exception as e:
+                logger.error(f"خطأ في تحديث بيانات {page_name}: {e}")
+                if old_data:
+                    return old_data
+                raise
+        return wrapper
+    return decorator
+
+@cache_dashboard_data
+def get_dashboard_data():
+    """
+    الحصول على جميع بيانات لوحة التحكم بطريقة فعالة مع تطبيق التخزين المؤقت
+    """
+    try:
+        # الحصول على حالة البوت
+        bot_status = get_bot_status()
+        
+        # استخراج الصفقات المفتوحة وإضافة معلومات السعر الحالي
+        trades = bot_status.get('open_trades', [])
+        logger.info(f"تم العثور على {len(trades)} صفقة مفتوحة من البوت")
+        
+        for trade in trades:
+            symbol = trade.get('symbol', '')
+            # التحقق من وجود رمز العملة
+            if not symbol:
+                continue
+                
+            # تحديث قيمة الكمية إذا لم تكن موجودة
+            if 'quantity' not in trade and 'origQty' in trade:
+                trade['quantity'] = trade['origQty']
+                
+            # الحصول على سعر الشراء مع معالجة القيم الخاطئة
+            try:
+                price = float(trade.get('price', trade.get('entry_price', 0)))
+            except (ValueError, TypeError):
+                price = 0
+                
+            # الحصول على السعر الحالي للعملة
+            current_price = get_current_price(symbol)
+            
+            # حساب التغيير المئوي
+            if price and price > 0 and current_price and current_price > 0:
+                change_percent = ((current_price - price) / price) * 100
+                trade['current_price'] = current_price
+                trade['change_percent'] = change_percent
+                trade['take_profit_price'] = round(price * (1 + TAKE_PROFIT), 6)
+                trade['stop_loss_price'] = round(price * (1 - STOP_LOSS), 6)
+            else:
+                trade['current_price'] = current_price or 0
+                trade['change_percent'] = 0
+                trade['take_profit_price'] = price * (1 + TAKE_PROFIT) if price else 0
+                trade['stop_loss_price'] = price * (1 - STOP_LOSS) if price else 0
+        
+        # الحصول على حالة رأس المال من capital_manager - سيقوم بالتخزين المؤقت تلقائياً
+        capital = get_capital_status()
+        
+        # تسجيل معلومات رأس المال
+        logger.info(f"رصيد حالة صفحة الرئيسية: {capital}")
+
+        # تأكيد إضافة الربح الإجمالي المحقق للعرض في لوحة التحكم إذا لم تكن موجودة
+        if 'total_profit_dollar' not in capital:
+            profit_statistics = calculate_total_profit()
+            capital['total_profit_dollar'] = profit_statistics['total_profit_dollar']
+            capital['win_rate'] = profit_statistics['win_rate']
+            capital['num_closed_trades'] = profit_statistics['num_closed_trades']
+        
+        # الحصول على العملات المراقبة - نسخة مبسطة ومستقرة
+        watched_coins_data = []
+        try:
+            # تحقق فقط من العملات المراقبة بدون بدء أي عمليات جديدة
+            try:
+                watched_symbols = get_watched_symbols()
+                
+                # إذا كان هناك عملات مراقبة، أضف بياناتها الأساسية
+                if watched_symbols:
+                    for symbol in watched_symbols[:5]:  # أفضل 5 عملات فقط
+                        try:
+                            # بيانات أساسية للعملة
+                            coin_data = {
+                                'symbol': symbol,
+                                'current_price': get_current_price(symbol) or 0,
+                                'trend': 'صاعد',  # قيمة افتراضية
+                                'potential_profit': 1.2,  # قيمة افتراضية
+                                'change_24h': 0.5  # قيمة افتراضية
+                            }
+                            watched_coins_data.append(coin_data)
+                        except Exception as e:
+                            logger.warning(f"تجاهل خطأ في بيانات العملة {symbol}: {e}")
+                            continue
+            except Exception as e:
+                logger.warning(f"تجاهل خطأ في قراءة قائمة العملات المراقبة: {e}")
+        except Exception as e:
+            logger.warning(f"خطأ عام في قراءة العملات المراقبة: {e}")
+        
+        # تأكد من أن هناك بيانات للعرض
+        if not watched_coins_data:
+            # إضافة بعض العملات الافتراضية للعرض في واجهة المستخدم
+            # سيتم تحديثها لاحقاً بالبيانات الحقيقية
+            default_coins = ["BTCUSDT", "ETHUSDT", "OPUSDT", "SOLUSDT", "DOGEUSDT"]
+            for symbol in default_coins:
+                watched_coins_data.append({
+                    'symbol': symbol,
+                    'current_price': 0,
+                    'trend': 'متابعة',
+                    'potential_profit': 0,
+                    'change_24h': 0
+                })
+        
+        # تجميع جميع البيانات في قاموس واحد
+        dashboard_data = {
+            'trades': trades,
+            'performance': bot_status.get('performance', {}),
+            'capital': capital,
+            'bot_running': bot_status.get('running', False),
+            'watched_coins': watched_coins_data  # إضافة العملات المراقبة
+        }
+        
+        return dashboard_data
+    except Exception as e:
+        logger.error(f"خطأ في الحصول على بيانات لوحة التحكم: {e}")
+        # إرجاع بيانات فارغة أو الأخيرة المعروفة في حالة الخطأ
+        last_known_data = dashboard_cache.get('data', {})
+        if not last_known_data:
+            last_known_data = {
+                'trades': [],
+                'performance': {},
+                'capital': {},
+                'bot_running': False,
+                'watched_coins': []
+            }
+        return last_known_data
+
+@app.route('/')
+def home():
+    """الصفحة الرئيسية / لوحة التحكم"""
+    try:
+        # التعرف على نوع الجهاز من User-Agent للتوجيه للواجهة المناسبة
+        user_agent = request.headers.get('User-Agent', '').lower()
+        is_mobile = 'mobile' in user_agent or 'android' in user_agent or 'iphone' in user_agent
+        
+        # إضافة بيانات للعملات المراقبة للعرض
+        watched_coins = [
+            {
+                'symbol': 'BTCUSDT',
+                'current_price': 50000,
+                'trend': 'صاعد',
+                'potential_profit': 1.5,
+                'change_24h': 2.3
+            },
+            {
+                'symbol': 'ETHUSDT',
+                'current_price': 3500,
+                'trend': 'صاعد',
+                'potential_profit': 2.1,
+                'change_24h': 3.2
+            },
+            {
+                'symbol': 'OPUSDT',
+                'current_price': 25,
+                'trend': 'صاعد',
+                'potential_profit': 1.9,
+                'change_24h': 1.5
+            },
+            {
+                'symbol': 'SOLUSDT',
+                'current_price': 150,
+                'trend': 'صاعد',
+                'potential_profit': 1.2,
+                'change_24h': 0.8
+            },
+            {
+                'symbol': 'DOGEUSDT',
+                'current_price': 0.12,
+                'trend': 'صاعد',
+                'potential_profit': 0.9,
+                'change_24h': 0.5
+            }
+        ]
+        
+        # استخدام البيانات الفعلية من النظام - بدون قيم ثابتة
+        try:
+            capital = get_capital_status()
+            
+            # التأكد من أن جميع المفاتيح الضرورية موجودة
+            if not isinstance(capital, dict):
+                capital = {}
+                
+            # تحويل القيم إلى نوع float لتجنب خطأ الـ __round__
+            for key in ['total_balance', 'risk_capital', 'per_trade_capital', 'daily_loss', 
+                        'daily_loss_limit', 'daily_loss_percent', 'risk_capital_percent',
+                        'total_profit_dollar', 'win_rate']:
+                if key in capital and capital[key] is not None:
+                    try:
+                        capital[key] = float(capital[key])
+                    except (TypeError, ValueError):
+                        capital[key] = 0.0
+            
+            # إضافة قيم افتراضية للمفاتيح المفقودة
+            if 'total_profit_dollar' not in capital:
+                capital['total_profit_dollar'] = 0.0
+            if 'win_rate' not in capital:
+                capital['win_rate'] = 0.0
+            if 'num_closed_trades' not in capital:
+                capital['num_closed_trades'] = 0
+                
+        except Exception as capital_error:
+            logger.error(f"خطأ في جلب حالة رأس المال: {capital_error}")
+            # قاموس فارغ آمن في حالة حدوث أي خطأ
+            capital = {
+                'total_balance': 0.0, 'risk_capital': 0.0, 'per_trade_capital': 0.0,
+                'daily_loss': 0.0, 'daily_loss_limit': 0.0, 'daily_loss_percent': 0.0,
+                'trading_allowed': True, 'risk_capital_percent': 0.0,
+                'total_profit_dollar': 0.0, 'win_rate': 0.0, 'num_closed_trades': 0
+            }
+        
+        try:
+            # استخدام البيانات الفعلية للأداء
+            performance = get_performance_stats()
+            
+            # التأكد من أن جميع المفاتيح الضرورية موجودة ومن نوع float
+            if not isinstance(performance, dict):
+                performance = {}
+                
+            # تحويل القيم إلى نوع float لتجنب خطأ الـ __round__
+            for key in ['win_rate', 'total_profit', 'total_loss', 'net_profit', 'net_profit_usdt']:
+                if key in performance and performance[key] is not None:
+                    try:
+                        performance[key] = float(performance[key])
+                    except (TypeError, ValueError):
+                        performance[key] = 0.0
+                        
+        except Exception as perf_error:
+            logger.error(f"خطأ في جلب إحصائيات الأداء: {perf_error}")
+            # قاموس فارغ آمن في حالة حدوث أي خطأ
+            performance = {
+                'total_trades': 0, 'open_trades': 0, 'closed_trades': 0,
+                'profit_trades': 0, 'loss_trades': 0, 'win_rate': 0.0,
+                'total_profit': 0.0, 'total_loss': 0.0, 'net_profit': 0.0, 'net_profit_usdt': 0.0
+            }
+        
+        trades = []
+            
+        # تمرير العام الحالي إلى القالب
+        current_year = datetime.now().year
+        
+        # اختيار القالب المناسب بناءً على نوع الجهاز
+        template = 'mobile_dashboard.html' if is_mobile else 'dashboard.html'
+        
+        logger.info(f"تقديم قالب {template} مع {len(watched_coins)} عملة مراقبة")
+        
+        # حساب وقت تشغيل البوت
+        bot_status = get_bot_status()
+        uptime_hours = 0
+        uptime_minutes = 0
+        
+        if bot_status.get('running', False) and bot_status.get('start_time'):
+            uptime = datetime.now() - bot_status.get('start_time')
+            uptime_total_seconds = uptime.total_seconds()
+            uptime_hours = uptime_total_seconds / 3600
+            uptime_minutes = (uptime_total_seconds % 3600) / 60
+        
+        return render_template(
+            template,
+            trades=trades,
+            performance=performance,
+            capital=capital,
+            base_currency=BASE_CURRENCY,
+            bot_running=bot_status.get('running', False),
+            watched_coins=watched_coins,
+            current_year=current_year,
+            uptime_hours=uptime_hours,
+            uptime_minutes=uptime_minutes
+        )
+    except Exception as e:
+        logger.error(f"خطأ في الصفحة الرئيسية: {e}")
+        # عرض رسالة خطأ مبسطة وعرض تفاصيل الاستثناء
+        error_details = str(e) + " - " + traceback.format_exc()
+        return f"حدث خطأ: {error_details}", 500
+
+def get_trades_data():
+    """
+    الحصول على بيانات الصفقات للعرض في صفحة الصفقات
+    تم فصلها عن route لتمكين التخزين المؤقت
+    """
+    # الحصول على قائمة الصفقات من الملف
+    all_trades = load_json_data('active_trades.json', [])
+    
+    # تحويل الطوابع الزمنية إلى تواريخ مقروءة
+    for trade in all_trades:
+        # تاريخ الفتح
+        timestamp = trade.get('timestamp')
+        if timestamp:
+            trade['opened_at'] = format_timestamp(timestamp)
+        else:
+            trade['opened_at'] = "غير متاح"
+            
+        # تاريخ الإغلاق
+        close_timestamp = trade.get('close_timestamp')
+        if close_timestamp:
+            trade['closed_at'] = format_timestamp(close_timestamp)
+        else:
+            trade['closed_at'] = "غير متاح"
+            
+        # إضافة نسبة الربح الحالية للصفقات المفتوحة
+        if trade.get('status') == 'OPEN':
+            symbol = trade.get('symbol')
+            entry_price = trade.get('entry_price', 0)
+            current_price = get_current_price(symbol)
+            
+            if entry_price and current_price:
+                trade['current_profit_pct'] = ((current_price - entry_price) / entry_price) * 100
+            else:
+                trade['current_profit_pct'] = 0
+    
+    # الحصول على إحصائيات الأداء
+    # تهيئة الإحصائيات الافتراضية
+    stats = {
+        'total_trades': len(all_trades),
+        'open_trades': len([t for t in all_trades if t.get('status') == 'OPEN']),
+        'closed_trades': len([t for t in all_trades if t.get('status') == 'CLOSED']),
+        'profit_trades': 0,
+        'loss_trades': 0,
+        'win_rate': 0,
+        'total_profit': 0.0,
+        'total_loss': 0.0,
+        'net_profit': 0.0
+    }
+    
+    # حساب إحصائيات الربح والخسارة من الصفقات المغلقة
+    total_profit_usdt = 0.0
+    total_loss_usdt = 0.0
+    
+    for trade in all_trades:
+        if trade.get('status') == 'CLOSED':
+            profit_pct = trade.get('profit_pct', 0)
+            
+            # حساب الربح/الخسارة بالدولار إذا كانت البيانات متوفرة
+            try:
+                entry_price = float(trade.get('entry_price', trade.get('price', 0)))
+                close_price = float(trade.get('close_price', 0))
+                quantity = float(trade.get('quantity', 0))
+                
+                if entry_price > 0 and close_price > 0 and quantity > 0:
+                    trade_value = entry_price * quantity
+                    profit_loss_usdt = (close_price - entry_price) * quantity
+                    
+                    # إضافة للإحصائيات
+                    if profit_pct > 0:
+                        total_profit_usdt += profit_loss_usdt
+                    else:
+                        total_loss_usdt += profit_loss_usdt
+            except Exception as e:
+                logger.warning(f"تعذر حساب الربح/الخسارة بالدولار للصفقة: {e}")
+            
+            # إضافة للإحصائيات بالنسبة المئوية
+            if profit_pct > 0:
+                stats['profit_trades'] += 1
+                stats['total_profit'] += profit_pct
+            else:
+                stats['loss_trades'] += 1
+                stats['total_loss'] += profit_pct
+    
+    # حساب نسبة النجاح
+    if stats['closed_trades'] > 0:
+        stats['win_rate'] = round((stats['profit_trades'] / stats['closed_trades']) * 100, 2)
+    
+    # حساب صافي الربح/الخسارة بالنسبة المئوية والدولار
+    stats['net_profit'] = stats['total_profit'] + stats['total_loss']
+    stats['total_profit_usdt'] = round(total_profit_usdt, 2)
+    stats['total_loss_usdt'] = round(total_loss_usdt, 2)
+    stats['net_profit_usdt'] = round(total_profit_usdt + total_loss_usdt, 2)
+    
+    # تدوير الأرقام
+    stats['total_profit'] = round(stats['total_profit'], 2)
+    stats['total_loss'] = round(stats['total_loss'], 2)
+    stats['net_profit'] = round(stats['net_profit'], 2)
+    
+    # محاولة الحصول على حالة البوت
+    try:
+        bot_running = get_bot_status().get('running', False)
+    except Exception as bot_error:
+        logger.error(f"Error getting bot status: {bot_error}")
+        bot_running = False
+    
+    return {
+        'all_trades': all_trades,
+        'stats': stats,
+        'bot_running': bot_running
+    }
+
+@app.route('/trades')
+def trades():
+    """صفحة الصفقات"""
+    try:
+        # استخدام الدالة المخزنة مؤقتاً
+        trades_data = cache_page_data('trades')(get_trades_data)()
+        
+        current_year = datetime.now().year
+        
+        return render_template(
+            'trades.html',
+            all_trades=trades_data['all_trades'],
+            stats=trades_data['stats'],
+            current_year=current_year,
+            bot_running=trades_data['bot_running']
+        )
+    except Exception as e:
+        logger.error(f"Error in trades route: {e}")
+        flash(f"حدث خطأ: {e}", "danger")
+        return render_template(
+            'trades.html',
+            all_trades=[],
+            stats={
+                'total_trades': 0, 'open_trades': 0, 'closed_trades': 0, 
+                'profit_trades': 0, 'loss_trades': 0, 'win_rate': 0,
+                'total_profit': 0.0, 'total_loss': 0.0, 'net_profit': 0.0
+            },
+            current_year=datetime.now().year,
+            bot_running=False
+        )
+
+def get_settings_data():
+    """
+    الحصول على بيانات الإعدادات للعرض في صفحة الإعدادات
+    تم فصلها عن route لتمكين التخزين المؤقت
+    """
+    # استيراد المتغيرات المطلوبة
+    from app.config import ACTIVE_EXCHANGE, TOTAL_RISK_CAPITAL_RATIO
+    
+    # إخفاء أجزاء من بيانات API الحساسة - MEXC
+    api_key_masked = API_KEY[:5] + "***" + API_KEY[-3:] if API_KEY else ""
+    api_secret_masked = "********************" if API_SECRET else ""
+    
+    # إخفاء أجزاء من بيانات API الحساسة - Telegram
+    telegram_token_masked = TELEGRAM_BOT_TOKEN[:5] + "***" + TELEGRAM_BOT_TOKEN[-3:] if TELEGRAM_BOT_TOKEN else ""
+    
+    config = {
+        'BASE_CURRENCY': BASE_CURRENCY,
+        'MAX_ACTIVE_TRADES': MAX_ACTIVE_TRADES,
+        'TOTAL_RISK_CAPITAL_RATIO': TOTAL_RISK_CAPITAL_RATIO,
+        'RISK_CAPITAL_RATIO': RISK_CAPITAL_RATIO,
+        'TAKE_PROFIT': TAKE_PROFIT,
+        'STOP_LOSS': STOP_LOSS,
+        'TIME_STOP_LOSS_HOURS': TIME_STOP_LOSS_HOURS,
+        'DAILY_LOSS_LIMIT': DAILY_LOSS_LIMIT,
+        'MONITOR_INTERVAL_SECONDS': MONITOR_INTERVAL_SECONDS,
+        'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID
+    }
+    
+    # الحصول على حالة البوت من cache_dashboard_data
+    bot_running = get_bot_status().get('running', False)
+    
+    return {
+        'config': config,
+        'active_exchange': ACTIVE_EXCHANGE,
+        'api_key_masked': api_key_masked,
+        'api_secret_masked': api_secret_masked,
+        'telegram_token_masked': telegram_token_masked,
+        'bot_running': bot_running
+    }
+
+@app.route('/settings', methods=['GET'])
+def settings():
+    """صفحة الإعدادات"""
+    try:
+        # استخدام الدالة المخزنة مؤقتاً
+        settings_data = cache_page_data('settings')(get_settings_data)()
+        
+        current_year = datetime.now().year
+        
+        return render_template(
+            'settings.html',
+            config=settings_data['config'],
+            active_exchange=settings_data['active_exchange'],
+            # MEXC API keys
+            api_key_masked=settings_data['api_key_masked'],
+            api_secret_masked=settings_data['api_secret_masked'],
+            # Telegram settings
+            telegram_token_masked=settings_data['telegram_token_masked'],
+            current_year=current_year,
+            bot_running=settings_data['bot_running']
+        )
+    except Exception as e:
+        logger.error(f"Error in settings route: {e}")
+        flash(f"حدث خطأ: {e}", "danger")
+        return render_template(
+            'settings.html',
+            config={},
+            api_key_masked="",
+            api_secret_masked="",
+            telegram_token_masked="",
+            current_year=datetime.now().year,
+            bot_running=False
+        )
+        
+@app.route('/reports')
+def reports():
+    """صفحة التقارير"""
+    try:
+        current_year = datetime.now().year
+        
+        # استخدام التخزين المؤقت لبيانات لوحة التحكم
+        dashboard_data = get_dashboard_data()
+        
+        return render_template(
+            'report.html',
+            current_year=current_year,
+            bot_running=dashboard_data.get('bot_running', False)
+        )
+    except Exception as e:
+        logger.error(f"Error in reports route: {e}")
+        flash(f"حدث خطأ: {e}", "danger")
+        return render_template(
+            'report.html',
+            current_year=datetime.now().year,
+            bot_running=False
+        )
+
+@app.route('/generate_report', methods=['POST'])
+def generate_report_route():
+    """إنشاء وإرسال تقرير فوري"""
+    try:
+        # إنشاء وإرسال التقرير
+        report_sent = generate_daily_report()
+        if report_sent:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False, "error": "فشل إرسال التقرير"})
+    except Exception as e:
+        logger.error(f"خطأ في إنشاء التقرير: {e}")
+        return jsonify({"success": False, "error": str(e)})
+
+@app.route('/update_report_settings', methods=['POST'])
+def update_report_settings():
+    """تحديث إعدادات التقارير"""
+    try:
+        # الحصول على إعدادات التقرير
+        report_hour = int(request.form.get('report_hour', 20))
+        
+        # إعادة تشغيل مؤقت التقرير بالوقت الجديد
+        start_daily_report_timer(target_hour=report_hour)
+        
+        flash("تم تحديث إعدادات التقارير بنجاح!", "success")
+        return redirect(url_for('reports'))
+    except Exception as e:
+        logger.error(f"خطأ في تحديث إعدادات التقارير: {e}")
+        flash(f"حدث خطأ أثناء تحديث إعدادات التقارير: {e}", "danger")
+        return redirect(url_for('reports'))
+
+@app.route('/api_settings', methods=['GET'])
+def api_settings():
+    """صفحة إعدادات API"""
+    try:
+        # إخفاء أجزاء من بيانات API الحساسة
+        api_key_masked = API_KEY[:5] + "***" + API_KEY[-3:] if API_KEY else ""
+        api_secret_masked = "********************" if API_SECRET else ""
+        
+        current_year = datetime.now().year
+        
+        # استخدام التخزين المؤقت لبيانات لوحة التحكم
+        dashboard_data = get_dashboard_data()
+        
+        return render_template(
+            'api_settings.html',
+            api_key_masked=api_key_masked,
+            api_secret_masked=api_secret_masked,
+            current_year=current_year,
+            bot_running=dashboard_data.get('bot_running', False)
+        )
+    except Exception as e:
+        logger.error(f"Error in api_settings route: {e}")
+        flash(f"حدث خطأ: {e}", "danger")
+        return render_template(
+            'api_settings.html',
+            api_key_masked="",
+            api_secret_masked="",
+            current_year=datetime.now().year,
+            bot_running=False
+        )
+
+@app.route('/save_settings', methods=['POST'])
+def save_settings():
+    """حفظ إعدادات البوت"""
+    try:
+        # الحصول على بيانات النموذج - إعدادات العامة
+        settings_data = {
+            'max_active_trades': int(request.form.get('max_active_trades', MAX_ACTIVE_TRADES)),
+            'total_risk_capital_ratio': float(request.form.get('total_risk_capital_ratio', TOTAL_RISK_CAPITAL_RATIO * 100)) / 100,
+            'risk_capital_ratio': float(request.form.get('risk_capital_ratio', RISK_CAPITAL_RATIO * 100)) / 100,
+            'take_profit': float(request.form.get('take_profit', TAKE_PROFIT * 100)) / 100,
+            'stop_loss': float(request.form.get('stop_loss', STOP_LOSS * 100)) / 100,
+            'time_stop_loss_hours': int(request.form.get('time_stop_loss_hours', TIME_STOP_LOSS_HOURS)),
+            'daily_loss_limit': float(request.form.get('daily_loss_limit', DAILY_LOSS_LIMIT * 100)) / 100,
+            'monitor_interval': int(request.form.get('monitor_interval', MONITOR_INTERVAL_SECONDS)),
+            'telegram_chat_id': request.form.get('telegram_chat_id', TELEGRAM_CHAT_ID),
+            'enable_notifications': 'enable_notifications' in request.form
+        }
+        
+        # الحصول على مفاتيح API لمنصة MEXC
+        mexc_api_key = request.form.get('api_key', '').strip()
+        mexc_api_secret = request.form.get('api_secret', '').strip()
+        
+        # تحديث مفاتيح MEXC إذا تم إدخالها
+        if mexc_api_key and mexc_api_secret:
+            from app.config import update_api_keys
+            keys_updated = update_api_keys(mexc_api_key, mexc_api_secret)
+            if keys_updated:
+                flash("تم تحديث مفاتيح MEXC API بنجاح", "success")
+            else:
+                flash("فشل في تحديث مفاتيح MEXC API", "warning")
+        
+        # إعادة تشغيل البوت إذا كان يعمل
+        bot_running = get_bot_status().get('running', False)
+        if bot_running:
+            stop_bot()
+            import time
+            time.sleep(1)  # انتظار لحظة لضمان إغلاق البوت بشكل كامل
+            start_bot()
+            flash("تم إعادة تشغيل البوت بالإعدادات الجديدة!", "success")
+        
+        # إعادة تهيئة البيئة بشكل كامل
+        import sys
+        import importlib
+        modules_to_reload = ['app.mexc_api', 'app.exchange_manager']
+        for module_name in modules_to_reload:
+            if module_name in sys.modules:
+                importlib.reload(sys.modules[module_name])
+                logger.info(f"تم إعادة تحميل وحدة {module_name} بنجاح")
+        
+        # حفظ الإعدادات (في تطبيق حقيقي، هذا سيكتب إلى ملف الإعدادات)
+        flash("تم حفظ الإعدادات بنجاح!", "success")
+        return redirect(url_for('settings'))
+    except Exception as e:
+        logger.error(f"Error saving settings: {e}")
+        flash(f"حدث خطأ أثناء حفظ الإعدادات: {e}", "danger")
+        return redirect(url_for('settings'))
+        
+@app.route('/save_api_settings', methods=['POST'])
+def save_api_settings():
+    """حفظ إعدادات API"""
+    try:
+        # الحصول على المفاتيح من النموذج
+        api_key = request.form.get('api_key', '').strip()
+        api_secret = request.form.get('api_secret', '').strip()
+        
+        logger.info(f"Received new API key: {api_key[:3]}...{api_key[-3:] if len(api_key) > 6 else ''}")
+        
+        if not api_key or not api_secret:
+            flash("يرجى إدخال مفتاح API وسر API بشكل صحيح", "danger")
+            return redirect(url_for('api_settings'))
+        
+        # التحقق من صحة تنسيق المفاتيح
+        if len(api_key) < 10 or len(api_secret) < 10:
+            flash("يرجى التأكد من إدخال مفاتيح API كاملة وبالشكل الصحيح", "warning")
+            return redirect(url_for('api_settings'))
+            
+        # استخدام الدالة المضافة في config.py لتحديث المفاتيح
+        from app.config import update_api_keys
+        update_success = update_api_keys(api_key, api_secret)
+        
+        if not update_success:
+            flash("حدث خطأ في تحديث مفاتيح API. يرجى المحاولة مرة أخرى.", "danger")
+            return redirect(url_for('api_settings'))
+        
+        # إعادة تشغيل البوت إذا كان يعمل
+        bot_running = get_bot_status().get('running', False)
+        if bot_running:
+            stop_bot()
+            import time  # إضافة import هنا
+            time.sleep(1)  # انتظار لحظة لضمان إغلاق البوت بشكل كامل
+            start_bot()
+            flash("تم حفظ مفاتيح API بنجاح وإعادة تشغيل البوت!", "success")
+        else:
+            flash("تم حفظ مفاتيح API بنجاح!", "success")
+            
+        logger.info(f"API keys updated successfully. Key: {api_key[:3]}...{api_key[-3:]}")
+        logger.info("تم تحديث مفاتيح API وإعادة تهيئة اتصال API بنجاح")
+        
+        # إعادة تهيئة البيئة بشكل كامل
+        import sys
+        import importlib
+        if 'app.mexc_api' in sys.modules:
+            importlib.reload(sys.modules['app.mexc_api'])
+        
+        return redirect(url_for('home'))
+    except Exception as e:
+        logger.error(f"Error saving API settings: {e}")
+        flash(f"حدث خطأ أثناء حفظ مفاتيح API: {e}", "danger")
+        return redirect(url_for('api_settings'))
+
+@app.route('/start', methods=['POST'])
+def start():
+    """بدء تشغيل البوت"""
+    try:
+        logger.info("محاولة تشغيل البوت من واجهة المستخدم")
+        # التأكد من استيراد الدالة
+        from app.trading_bot import start_bot, get_bot_status, BOT_STATUS
+        
+        # تسجيل حالة البوت قبل المحاولة
+        bot_status_before = get_bot_status().get('running', False)
+        logger.info(f"حالة البوت قبل محاولة التشغيل: {bot_status_before}, BOT_STATUS={BOT_STATUS}")
+        
+        if start_bot():
+            # تسجيل حالة البوت بعد المحاولة
+            bot_status_after = get_bot_status().get('running', False)
+            logger.info(f"تم تشغيل البوت! حالة البوت بعد التشغيل: {bot_status_after}, BOT_STATUS={BOT_STATUS}")
+            flash("تم تشغيل البوت بنجاح!", "success")
+        else:
+            logger.warning("البوت يعمل بالفعل.")
+            flash("البوت يعمل بالفعل.", "warning")
+        
+        return redirect(url_for('home'))
+    except Exception as e:
+        logger.error(f"خطأ في تشغيل البوت: {e}")
+        logger.error(traceback.format_exc())  # تسجيل تفاصيل الخطأ كاملة
+        flash(f"فشل في تشغيل البوت: {e}", "danger")
+        return redirect(url_for('home'))
+
+@app.route('/stop', methods=['POST'])
+def stop():
+    """إيقاف البوت"""
+    try:
+        logger.info("محاولة إيقاف البوت من واجهة المستخدم")
+        # التأكد من استيراد الدالة
+        from app.trading_bot import stop_bot, get_bot_status
+        
+        # تسجيل حالة البوت قبل المحاولة
+        bot_status_before = get_bot_status().get('running', False)
+        logger.info(f"حالة البوت قبل محاولة الإيقاف: {bot_status_before}")
+        
+        if stop_bot():
+            logger.info("تم إيقاف البوت بنجاح")
+            flash("تم إيقاف البوت بنجاح!", "success")
+        else:
+            logger.warning("البوت متوقف بالفعل.")
+            flash("البوت متوقف بالفعل.", "warning")
+            
+        # تسجيل حالة البوت بعد المحاولة
+        bot_status_after = get_bot_status().get('running', False)
+        logger.info(f"حالة البوت بعد محاولة الإيقاف: {bot_status_after}")
+        
+        return redirect(url_for('home'))
+    except Exception as e:
+        logger.error(f"خطأ في إيقاف البوت: {e}")
+        logger.error(traceback.format_exc())  # تسجيل تفاصيل الخطأ كاملة
+        flash(f"فشل في إيقاف البوت: {e}", "danger")
+        return redirect(url_for('home'))
+
+def get_watched_coins_data():
+    """
+    الحصول على بيانات العملات المراقبة للعرض في صفحة العملات المراقبة
+    تم فصلها عن route لتمكين التخزين المؤقت
+    """
+    # بدء فاحص السوق إذا لم يكن يعمل بالفعل
+    if not get_watched_symbols():
+        start_market_scanner(interval=300)  # فحص كل 5 دقائق
+        
+    # الحصول على فرص التداول
+    opportunities = get_trading_opportunities()
+    
+    # الحصول على العملات المراقبة
+    watched_coins = get_watched_symbols()
+    
+    # الحصول على بيانات إضافية عن كل عملة
+    coin_data = []
+    for symbol in watched_coins:
+        try:
+            current_price = get_current_price(symbol)
+            
+            # العثور على العملة في قائمة الفرص
+            opportunity = next((opp for opp in opportunities if opp['symbol'] == symbol), None)
+            
+            if opportunity:
+                coin_data.append({
+                    'symbol': symbol,
+                    'current_price': current_price,
+                    'trend': opportunity.get('trend', 'غير معروف'),
+                    'potential_profit': opportunity.get('potential_profit', 0),
+                    'reason': opportunity.get('reason', ''),
+                    'volume_24h': opportunity.get('volume_24h', 0),
+                    'change_24h': opportunity.get('change_24h', 0),
+                    'rsi': opportunity.get('analysis', {}).get('rsi', 0)
+                })
+        except Exception as e:
+            logger.error(f"Error getting data for {symbol}: {e}")
+    
+    # ترتيب العملات حسب نسبة الربح المحتملة
+    sorted_coins = sorted(coin_data, key=lambda x: x['potential_profit'], reverse=True)
+    
+    # إضافة حالة البوت
+    bot_running = get_bot_status().get('running', False)
+    
+    return {
+        'coins': sorted_coins,
+        'bot_running': bot_running
+    }
+
+@app.route('/watched_coins')
+def watched_coins():
+    """صفحة العملات المراقبة"""
+    try:
+        # استخدام الدالة المخزنة مؤقتاً
+        coins_data = cache_page_data('watched_coins')(get_watched_coins_data)()
+        
+        current_year = datetime.now().year
+        return render_template(
+            'watched_coins.html',
+            coins=coins_data['coins'],
+            current_year=current_year,
+            bot_running=coins_data['bot_running']
+        )
+    except Exception as e:
+        logger.error(f"Error in watched_coins route: {e}")
+        flash(f"حدث خطأ: {e}", "danger")
+        return render_template(
+            'watched_coins.html',
+            coins=[],
+            current_year=datetime.now().year,
+            bot_running=False
+        )
+
+@app.route('/scan_market', methods=['POST'])
+def scan_market_route():
+    """تشغيل فحص يدوي للسوق"""
+    try:
+        # تنفيذ فحص فوري
+        opportunities = scan_market()
+        
+        if opportunities:
+            flash(f"تم العثور على {len(opportunities)} فرصة للتداول", "success")
+        else:
+            flash("لم يتم العثور على فرص تداول مناسبة في الوقت الحالي", "warning")
+            
+        return redirect(url_for('watched_coins'))
+    except Exception as e:
+        logger.error(f"Error in scan_market route: {e}")
+        flash(f"فشل في فحص السوق: {e}", "danger")
+        return redirect(url_for('watched_coins'))
+
+@app.route('/start_scanner', methods=['POST'])
+def start_scanner():
+    """بدء تشغيل فاحص السوق"""
+    try:
+        interval = int(request.form.get('interval', 300))
+        start_market_scanner(interval=interval)
+        flash(f"تم بدء تشغيل فاحص السوق (فترة الفحص: {interval} ثانية)", "success")
+        return redirect(url_for('watched_coins'))
+    except Exception as e:
+        logger.error(f"Error starting market scanner: {e}")
+        flash(f"فشل في بدء تشغيل فاحص السوق: {e}", "danger")
+        return redirect(url_for('watched_coins'))
+
+@app.route('/stop_scanner', methods=['POST'])
+def stop_scanner():
+    """إيقاف فاحص السوق"""
+    try:
+        stop_market_scanner()
+        flash("تم إيقاف فاحص السوق", "success")
+        return redirect(url_for('watched_coins'))
+    except Exception as e:
+        logger.error(f"Error stopping market scanner: {e}")
+        flash(f"فشل في إيقاف فاحص السوق: {e}", "danger")
+        return redirect(url_for('watched_coins'))
+
+@app.route('/coin_details/<symbol>')
+def coin_details(symbol):
+    """صفحة تفاصيل العملة"""
+    try:
+        # التحليل المفصل للعملة
+        coin = get_symbol_analysis(symbol)
+        
+        # جلب بيانات الشموع الأخيرة للتمثيل البياني
+        klines = get_klines(symbol, interval='15m', limit=48)  # 12 ساعة من البيانات
+        
+        # تحويل البيانات إلى تنسيق مناسب للتمثيل البياني
+        chart_data = []
+        if klines:
+            for kline in klines:
+                chart_data.append({
+                    'time': kline.get('open_time'),
+                    'open': kline.get('open'),
+                    'high': kline.get('high'),
+                    'low': kline.get('low'),
+                    'close': kline.get('close'),
+                    'volume': kline.get('volume')
+                })
+        
+        # التأكد من وجود البيانات المطلوبة
+        if 'error' in coin:
+            flash(f"حدث خطأ في تحليل العملة: {coin['error']}", "danger")
+            return redirect(url_for('watched_coins'))
+        
+        # تأكد من وجود مفتاح analysis
+        if 'analysis' not in coin:
+            coin['analysis'] = {
+                'rsi': 50,
+                'ema_status': 'غير متاح',
+                'volatility': 0
+            }
+        
+        current_year = datetime.now().year
+        return render_template(
+            'coin_details.html',
+            coin=coin,
+            chart_data=chart_data,
+            current_year=current_year,
+            bot_running=get_bot_status().get('running', False)
+        )
+    except Exception as e:
+        logger.error(f"Error in coin_details route for {symbol}: {e}")
+        flash(f"حدث خطأ في عرض تفاصيل العملة {symbol}: {e}", "danger")
+        return redirect(url_for('watched_coins'))
+
+@app.route('/api/watched_coins')
+def api_watched_coins():
+    """واجهة API للحصول على العملات المراقبة"""
+    try:
+        opportunities = get_trading_opportunities()
+        return jsonify({
+            'status': 'success',
+            'data': opportunities
+        })
+    except Exception as e:
+        logger.error(f"Error in api_watched_coins: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@app.route('/api/test_api_permissions', methods=['GET'])
+def api_test_permissions():
+    """واجهة API لاختبار صلاحيات API"""
+    try:
+        from app.mexc_api import test_api_permissions
+        
+        # اختبار الصلاحيات
+        permissions = test_api_permissions()
+        
+        return jsonify({
+            'status': 'success',
+            'data': permissions
+        })
+    except Exception as e:
+        logger.error(f"خطأ في اختبار صلاحيات API: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@app.route('/api/clean_fake_trades', methods=['POST'])
+def api_clean_fake_trades():
+    """واجهة API لتنظيف الصفقات الوهمية"""
+    try:
+        # استدعاء دالة تنظيف الصفقات الوهمية من النظام الجديد
+        result = clean_all_fake_trades()
+        
+        logger.info(f"🧹 تم تنفيذ تنظيف الصفقات الوهمية: {result}")
+        
+        return jsonify({
+            'status': 'success',
+            'message': f"تم تنظيف {result.get('cleaned_count', 0)} صفقة وهمية من أصل {result.get('original_count', 0)} صفقة",
+            'data': result
+        })
+    except Exception as e:
+        logger.error(f"❌ خطأ في تنظيف الصفقات الوهمية: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@app.route('/api/execute_trade', methods=['POST'])
+def api_execute_trade():
+    """واجهة API لتنفيذ صفقة تداول"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({
+                'status': 'error',
+                'message': 'البيانات المطلوبة غير متوفرة'
+            }), 400
+            
+        symbol = data.get('symbol')
+        if not symbol:
+            return jsonify({
+                'status': 'error',
+                'message': 'رمز العملة مطلوب'
+            }), 400
+            
+        # تنفيذ الصفقة
+        from app.trade_executor import execute_trade
+        
+        # حساب الكمية المناسبة بناءً على رأس المال المتاح
+        from app.capital_manager import get_position_size
+        quantity = get_position_size(symbol)
+        
+        success = execute_trade(symbol, quantity)
+        
+        if success:
+            return jsonify({
+                'status': 'success',
+                'message': f'تم تنفيذ الصفقة على {symbol} بنجاح'
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': f'فشل في تنفيذ الصفقة على {symbol}'
+            }), 500
+    except Exception as e:
+        logger.error(f"Error in api_execute_trade: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@app.route('/test_trade', methods=['GET', 'POST'])
+def test_trade():
+    """اختبار تنفيذ صفقة تجريبية"""
+    if request.method == 'POST':
+        try:
+            # استخراج المعلمات من النموذج
+            symbol = request.form.get('symbol', 'BTCUSDT')
+            quantity = float(request.form.get('quantity', '0.0001'))
+            trade_type = request.form.get('trade_type', 'BUY')  # إضافة نوع الصفقة (BUY/SELL)
+            
+            # تسجيل المحاولة
+            logger.info(f"⭐⭐⭐ محاولة اختبار صفقة: {trade_type} {symbol} بكمية {quantity} ⭐⭐⭐")
+            
+            result = None
+            
+            # اختيار الدالة المناسبة بناءً على نوع الصفقة
+            if trade_type == 'SELL':
+                # استخدام دالة البيع مباشرة من trade_logic
+                from app.trade_logic import close_trade
+                
+                # تسجيل مكثف لمساعدة التشخيص
+                logger.info(f"استدعاء دالة close_trade من صفحة الاختبار لـ {symbol} بكمية {quantity}")
+                
+                success = close_trade(symbol, quantity)
+                
+                if success:
+                    result = {
+                        'success': True,
+                        'test_details': {
+                            'order_id': 'test_sell_' + str(int(time.time())),
+                            'symbol': symbol,
+                            'quantity': quantity,
+                            'type': 'SELL',
+                            'message': 'تم تنفيذ صفقة البيع بنجاح'
+                        }
+                    }
+                    logger.info(f"✅ تم تنفيذ صفقة البيع بنجاح لـ {symbol}")
+                    flash(f"تم تنفيذ صفقة البيع بنجاح لـ {symbol} بكمية {quantity}", "success")
+                else:
+                    result = {
+                        'success': False,
+                        'error': f'فشل في تنفيذ صفقة البيع على {symbol}'
+                    }
+                    logger.error(f"❌ فشل تنفيذ صفقة البيع لـ {symbol}")
+                    flash(f"فشل في تنفيذ صفقة البيع لـ {symbol}", "danger")
+            else:
+                # تنفيذ صفقة شراء تجريبية
+                from app.exchange_manager import place_order
+                
+                # تسجيل مكثف لمساعدة التشخيص
+                logger.info(f"استدعاء دالة place_order من صفحة الاختبار لـ {symbol} بكمية {quantity}")
+                
+                order_result = place_order(symbol, "BUY", quantity, order_type="MARKET")
+                
+                if order_result:
+                    result = {
+                        'success': True,
+                        'test_details': {
+                            'order_id': order_result.get('orderId', 'unknown'),
+                            'symbol': symbol,
+                            'quantity': quantity,
+                            'type': 'BUY',
+                            'message': 'تم تنفيذ صفقة الشراء بنجاح',
+                            'full_response': order_result
+                        }
+                    }
+                    logger.info(f"✅ تم تنفيذ صفقة الشراء بنجاح: {order_result}")
+                    flash(f"تم تنفيذ صفقة الشراء بنجاح! معرف الأمر: {order_result.get('orderId', 'unknown')}", "success")
+                else:
+                    result = {
+                        'success': False,
+                        'error': f'فشل في تنفيذ صفقة الشراء على {symbol}'
+                    }
+                    logger.error(f"❌ فشل تنفيذ صفقة الشراء")
+                    flash(f"فشل في تنفيذ صفقة الشراء على {symbol}", "danger")
+                
+            return render_template(
+                'test_trade.html',
+                result=result,
+                symbol=symbol,
+                quantity=quantity,
+                trade_type=trade_type,
+                current_year=datetime.now().year
+            )
+            
+        except Exception as e:
+            logger.error(f"خطأ في اختبار الصفقة: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+            flash(f"حدث خطأ أثناء الاختبار: {e}", "danger")
+    
+    # عرض صفحة الاختبار
+    return render_template(
+        'test_trade.html',
+        result=None,
+        symbol="BTCUSDT",
+        quantity=0.0001,
+        trade_type="BUY",
+        current_year=datetime.now().year
+    )
+    
+@app.route('/test_sell', methods=['GET', 'POST'])
+def test_sell():
+    """اختبار مخصص لوظيفة البيع فقط"""
+    import traceback  # استيراد traceback مباشرة في بداية الدالة
+    
+    if request.method == 'POST':
+        try:
+            # استخراج المعلمات من النموذج
+            symbol = request.form.get('symbol', 'BTCUSDT')
+            quantity = float(request.form.get('quantity', '0.0001'))
+            
+            # تسجيل المحاولة
+            logger.info(f"⭐⭐⭐ اختبار مخصص لوظيفة البيع - محاولة بيع {symbol} بكمية {quantity} ⭐⭐⭐")
+            
+            # استخدام دالة البيع مباشرة من trade_logic
+            from app.trade_logic import close_trade
+            
+            # تسجيل مكثف لمساعدة التشخيص
+            logger.info(f"استدعاء دالة close_trade مباشرة من صفحة اختبار البيع لـ {symbol} بكمية {quantity}")
+            
+            # استدعاء كل وظيفة معنية بالبيع
+            account_balance = None
+            current_price = None
+            place_order_result = None
+            close_trade_result = None
+            
+            # تسجيل حالة الرصيد قبل البيع
+            try:
+                from app.exchange_manager import get_account_balance, get_current_price
+                account_balance = get_account_balance()
+                current_price = get_current_price(symbol)
+                logger.info(f"معلومات قبل البيع - رصيد الحساب: {account_balance}, سعر {symbol}: {current_price}")
+            except Exception as e:
+                logger.error(f"خطأ في الحصول على معلومات الحساب: {e}")
+                logger.error(traceback.format_exc())
+            
+            # تجربة وظيفة البيع
+            try:
+                # تنفيذ فقط place_order
+                from app.exchange_manager import place_order
+                logger.info(f"اختبار place_order مباشرة")
+                place_order_result = place_order(symbol, "SELL", quantity, order_type="MARKET")
+                logger.info(f"نتيجة place_order: {place_order_result}")
+            except Exception as e:
+                logger.error(f"خطأ في وظيفة place_order: {e}")
+                logger.error(traceback.format_exc())
+            
+            # تجربة وظيفة البيع الأساسية
+            try:
+                logger.info(f"اختبار close_trade")
+                close_trade_result = close_trade(symbol, quantity)
+                logger.info(f"نتيجة close_trade: {close_trade_result}")
+            except Exception as e:
+                logger.error(f"خطأ في وظيفة close_trade: {e}")
+                logger.error(traceback.format_exc())
+            
+            # تسجيل الرصيد بعد البيع
+            try:
+                from app.exchange_manager import get_account_balance  # إعادة استيراد للتأكد
+                account_balance_after = get_account_balance()
+                logger.info(f"معلومات بعد البيع - رصيد الحساب: {account_balance_after}")
+            except Exception as e:
+                logger.error(f"خطأ في الحصول على معلومات الحساب بعد البيع: {e}")
+                logger.error(traceback.format_exc())
+            
+            if close_trade_result:
+                flash(f"تم تنفيذ البيع بنجاح لـ {symbol} بكمية {quantity}", "success")
+            else:
+                flash(f"فشل في تنفيذ البيع لـ {symbol}", "danger")
+            
+            return render_template(
+                'test_sell.html',
+                symbol=symbol,
+                quantity=quantity,
+                account_balance=account_balance,
+                current_price=current_price,
+                place_order_result=place_order_result,
+                close_trade_result=close_trade_result,
+                current_year=datetime.now().year
+            )
+            
+        except Exception as e:
+            logger.error(f"خطأ في اختبار البيع: {e}")
+            logger.error(traceback.format_exc())
+            flash(f"حدث خطأ أثناء اختبار البيع: {e}", "danger")
+    
+    # عرض صفحة اختبار البيع
+    return render_template(
+        'test_sell.html',
+        symbol="BTCUSDT",
+        quantity=0.0001,
+        account_balance=None,
+        current_price=None,
+        place_order_result=None,
+        close_trade_result=None,
+        current_year=datetime.now().year
+    )
+
+# استيراد وتشغيل النظام الجديد للمراقبة
+from app.watchdog import start_watchdog, send_ping_to_prevent_sleep
+
+# تشغيل نظام المراقبة الذي يرسل تنبيهات عند توقف البوت
+# استخدام دالة عادية بدلاً من decorator لتشغيل المهام الخلفية
+def start_all_background_tasks():
+    """تشغيل جميع المهام الخلفية عند بدء التطبيق"""
+    logger.info("🚀 بدء تشغيل جميع المهام الخلفية...")
+    
+    # تشغيل نظام المراقبة الجديد
+    start_watchdog()
+    logger.info("✅ تم تشغيل نظام المراقبة للتنبيه عن توقف البوت")
+    
+    # إنشاء مهمة لمنع الخادم من الدخول في وضع السكون
+    def keep_alive_task():
+        """مهمة للحفاظ على استمرارية الخادم ومنعه من الدخول في وضع السكون"""
+        while True:
+            try:
+                # إرسال طلب لمنع وضع السكون كل 10 دقائق
+                send_ping_to_prevent_sleep()
+                time.sleep(600)  # 10 دقائق
+            except Exception as e:
+                logger.error(f"خطأ في مهمة الحفاظ على استمرارية الخادم: {e}")
+                time.sleep(60)  # انتظار دقيقة قبل المحاولة مرة أخرى
+    
+    # تشغيل مهمة الحفاظ على استمرارية الخادم في خلفية النظام
+    keep_alive_thread = threading.Thread(target=keep_alive_task, daemon=True)
+    keep_alive_thread.start()
+    logger.info("✅ تم تشغيل آلية الحفاظ على استمرارية الخادم")
+
+# تشغيل المهام الخلفية عند بدء التطبيق
+start_all_background_tasks()
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)

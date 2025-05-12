@@ -1,0 +1,85 @@
+2025-05-11 18:41:21,766 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 18:41:21,767 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 18:41:21,768 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...CBPjM
+2025-05-11 18:41:21,768 - find_supported_coins - INFO - ✅ تم استيراد الدوال بنجاح
+2025-05-11 18:41:21,768 - find_supported_coins - INFO - 🚀 بدء البحث عن العملات المدعومة...
+2025-05-11 18:41:21,769 - find_supported_coins - INFO - 🔍 جاري البحث عن الأسواق المدعومة...
+2025-05-11 18:41:22,929 - find_supported_coins - INFO - 📊 تم العثور على 2726 رمز مدعوم
+2025-05-11 18:41:22,929 - find_supported_coins - INFO - 📈 تم العثور على 0 سوق USDT مدعوم
+2025-05-11 18:41:22,930 - find_supported_coins - INFO - أول 10 أسواق USDT مدعومة:
+2025-05-11 18:41:22,931 - find_supported_coins - INFO - ✅ تم حفظ القائمة الكاملة في ملف supported_markets.json
+2025-05-11 18:41:22,931 - find_supported_coins - INFO - 🌟 تم العثور على 0 سوق شائع من أصل 0 سوق مدعوم
+2025-05-11 18:41:22,931 - find_supported_coins - INFO - الأسواق الشائعة المدعومة:
+2025-05-11 20:08:25,856 - config - INFO - MEXC_API_KEY configured: Yes
+2025-05-11 20:08:25,859 - config - INFO - MEXC_API_SECRET configured: Yes
+2025-05-11 20:08:25,859 - config - INFO - MEXC_API_KEY starts with: mx0vg... and ends with ...IdtZ5
+2025-05-11 20:08:25,860 - find_supported_coins - INFO - ✅ تم استيراد الدوال بنجاح
+2025-05-11 20:08:25,860 - find_supported_coins - INFO - 🚀 بدء البحث عن العملات المدعومة...
+2025-05-11 20:08:25,860 - find_supported_coins - INFO - 🔍 جاري البحث عن الأسواق المدعومة...
+2025-05-11 20:08:26,047 - find_supported_coins - INFO - 📊 تم العثور على 2726 رمز مدعوم
+2025-05-11 20:08:26,049 - find_supported_coins - INFO - نموذج لمعلومات الرمز: {
+  "symbol": "BROCKUSDT",
+  "status": "1",
+  "baseAsset": "BROCK",
+  "baseAssetPrecision": 2,
+  "quoteAsset": "USDT",
+  "quotePrecision": 5,
+  "quoteAssetPrecision": 5,
+  "baseCommissionPrecision": 2,
+  "quoteCommissionPrecision": 5,
+  "orderTypes": [
+    "LIMIT",
+    "MARKET",
+    "LIMIT_MAKER"
+  ],
+  "isSpotTradingAllowed": true,
+  "isMarginTradingAllowed": false,
+  "quoteAmountPrecision": "1",
+  "baseSizePrecision": "0",
+  "permissions": [
+    "SPOT"
+  ],
+  "filters": [],
+  "maxQuoteAmount": "2000000",
+  "makerCommission": "0",
+  "takerCommission": "0.0005",
+  "quoteAmountPrecisionMarket": "1",
+  "maxQuoteAmountMarket": "100000",
+  "fullName": "Bitrock",
+  "tradeSideType": 1,
+  "st": false
+}
+2025-05-11 20:08:26,052 - find_supported_coins - INFO - 📈 تم العثور على 2517 سوق USDT مدعوم
+2025-05-11 20:08:26,052 - find_supported_coins - INFO - أول 10 أسواق USDT مدعومة:
+2025-05-11 20:08:26,053 - find_supported_coins - INFO - 1. BROCKUSDT (BROCK/USDT)
+2025-05-11 20:08:26,054 - find_supported_coins - INFO - 2. BNTUSDT (BNT/USDT)
+2025-05-11 20:08:26,054 - find_supported_coins - INFO - 3. NTXUSDT (NTX/USDT)
+2025-05-11 20:08:26,054 - find_supported_coins - INFO - 4. DEVVEUSDT (DEVVE/USDT)
+2025-05-11 20:08:26,054 - find_supported_coins - INFO - 5. XOXNOUSDT (XOXNO/USDT)
+2025-05-11 20:08:26,054 - find_supported_coins - INFO - 6. HTRUSDT (HTR/USDT)
+2025-05-11 20:08:26,055 - find_supported_coins - INFO - 7. GQBUSDT (GQB/USDT)
+2025-05-11 20:08:26,055 - find_supported_coins - INFO - 8. VOXELUSDT (VOXEL/USDT)
+2025-05-11 20:08:26,055 - find_supported_coins - INFO - 9. LVNUSDT (LVN/USDT)
+2025-05-11 20:08:26,055 - find_supported_coins - INFO - 10. LOKAUSDT (LOKA/USDT)
+2025-05-11 20:08:26,082 - find_supported_coins - INFO - ✅ تم حفظ القائمة الكاملة في ملف supported_markets.json
+2025-05-11 20:08:26,084 - find_supported_coins - INFO - 🌟 تم العثور على 17 سوق شائع من أصل 2517 سوق مدعوم
+2025-05-11 20:08:26,084 - find_supported_coins - INFO - الأسواق الشائعة المدعومة:
+2025-05-11 20:08:26,084 - find_supported_coins - INFO - 1. SOLUSDT (SOL/USDT)
+2025-05-11 20:08:26,084 - find_supported_coins - INFO - 2. AVAXUSDT (AVAX/USDT)
+2025-05-11 20:08:26,085 - find_supported_coins - INFO - 3. TRXUSDT (TRX/USDT)
+2025-05-11 20:08:26,085 - find_supported_coins - INFO - 4. DOGEUSDT (DOGE/USDT)
+2025-05-11 20:08:26,085 - find_supported_coins - INFO - 5. XRPUSDT (XRP/USDT)
+2025-05-11 20:08:26,085 - find_supported_coins - INFO - 6. ARBUSDT (ARB/USDT)
+2025-05-11 20:08:26,085 - find_supported_coins - INFO - 7. ATOMUSDT (ATOM/USDT)
+2025-05-11 20:08:26,086 - find_supported_coins - INFO - 8. OPUSDT (OP/USDT)
+2025-05-11 20:08:26,086 - find_supported_coins - INFO - 9. NEARUSDT (NEAR/USDT)
+2025-05-11 20:08:26,086 - find_supported_coins - INFO - 10. ADAUSDT (ADA/USDT)
+2025-05-11 20:08:26,086 - find_supported_coins - INFO - 11. LINKUSDT (LINK/USDT)
+2025-05-11 20:08:26,087 - find_supported_coins - INFO - 12. DOTUSDT (DOT/USDT)
+2025-05-11 20:08:26,087 - find_supported_coins - INFO - 13. BNBUSDT (BNB/USDT)
+2025-05-11 20:08:26,087 - find_supported_coins - INFO - 14. ETHUSDT (ETH/USDT)
+2025-05-11 20:08:26,087 - find_supported_coins - INFO - 15. SHIBUSDT (SHIB/USDT)
+2025-05-11 20:08:26,088 - find_supported_coins - INFO - 16. BTCUSDT (BTC/USDT)
+2025-05-11 20:08:26,088 - find_supported_coins - INFO - 17. LTCUSDT (LTC/USDT)
+2025-05-11 20:08:26,090 - find_supported_coins - INFO - ✅ تم العثور على عملات مدعومة
+2025-05-11 20:08:26,091 - find_supported_coins - INFO - ✅ تم حفظ 17 رمز شائع في ملف popular_symbols.json
