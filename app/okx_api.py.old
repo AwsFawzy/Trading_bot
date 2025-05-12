@@ -1,0 +1,623 @@
+# app/okx_api.py
+import requests
+import time
+import hmac
+import base64
+import logging
+import json
+import os
+from typing import Dict, List, Optional, Union, Any, Tuple
+
+# إعدادات API OKX
+BASE_URL = "https://www.okx.com"
+API_VERSION = "/api/v5"
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger('okx_api')
+
+# استيراد مفاتيح API من متغيرات البيئة
+API_KEY = os.environ.get("OKX_API_KEY", "")
+API_SECRET = os.environ.get("OKX_API_SECRET", "")
+API_PASSPHRASE = os.environ.get("OKX_API_PASSPHRASE", "")
+
+# طباعة معلومات عن المفاتيح المتاحة (بشكل آمن بدون عرض القيم الكاملة)
+if API_KEY:
+    logger.info(f"تم تحميل OKX_API_KEY من متغيرات البيئة (يبدأ بـ: {API_KEY[:5]}... وينتهي بـ ...{API_KEY[-5:] if len(API_KEY) > 10 else ''})")
+else:
+    logger.warning("OKX_API_KEY غير متوفر في متغيرات البيئة")
+
+def set_api_keys(key: str, secret: str, passphrase: str):
+    """
+    تعيين مفاتيح API الخاصة بـ OKX
+    """
+    global API_KEY, API_SECRET, API_PASSPHRASE
+    API_KEY = key
+    API_SECRET = secret
+    API_PASSPHRASE = passphrase
+    logger.info(f"تم تعيين مفاتيح OKX API - المفتاح يبدأ بـ: {key[:5]}... وينتهي بـ ...{key[-5:] if len(key) > 10 else ''}")
+    return True
+
+def get_timestamp():
+    """إرجاع الطابع الزمني بتنسيق ISO 8601"""
+    return time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime())
+
+def sign_request(timestamp, method, request_path, body=''):
+    """
+    توقيع الطلب حسب مواصفات OKX
+    https://www.okx.com/docs-v5/en/#rest-api-authentication
+    """
+    if not API_SECRET:
+        logger.error("API_SECRET غير مهيأ")
+        return "", ""
+    
+    # إنشاء السلسلة التي سيتم توقيعها
+    message = timestamp + method + request_path
+    if body:
+        message += body
+    
+    # إنشاء التوقيع باستخدام HMAC-SHA256
+    try:
+        mac = hmac.new(
+            API_SECRET.encode('utf-8'),
+            message.encode('utf-8'),
+            digestmod='sha256'
+        )
+        signature = base64.b64encode(mac.digest()).decode('utf-8')
+        return signature
+    except Exception as e:
+        logger.error(f"خطأ أثناء إنشاء التوقيع: {e}")
+        return ""
+
+def get_headers(method, request_path, body=''):
+    """إنشاء ترويسات HTTP مع التوقيع للطلبات المصادق عليها"""
+    if not API_KEY or not API_SECRET or not API_PASSPHRASE:
+        logger.error("مفاتيح API غير مكتملة")
+        return {}
+    
+    timestamp = get_timestamp()
+    signature = sign_request(timestamp, method, request_path, body)
+    
+    headers = {
+        'OK-ACCESS-KEY': API_KEY,
+        'OK-ACCESS-SIGN': signature,
+        'OK-ACCESS-TIMESTAMP': timestamp,
+        'OK-ACCESS-PASSPHRASE': API_PASSPHRASE,
+        'Content-Type': 'application/json'
+    }
+    return headers
+
+def get_account_balance():
+    """
+    جلب رصيد الحساب من منصة OKX
+    """
+    try:
+        endpoint = "/account/balance"
+        method = "GET"
+        request_path = API_VERSION + endpoint
+        headers = get_headers(method, request_path)
+        
+        url = BASE_URL + request_path
+        response = requests.get(url, headers=headers)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('code') == '0':
+                logger.info("تم جلب بيانات الرصيد بنجاح من OKX")
+                return data.get('data', [])
+            else:
+                logger.error(f"خطأ في استجابة OKX: {data.get('msg')}")
+                return None
+        else:
+            logger.error(f"فشل طلب رصيد الحساب: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        logger.error(f"خطأ في جلب رصيد الحساب: {e}")
+        return None
+
+def get_balance(asset):
+    """
+    جلب رصيد عملة محددة من منصة OKX
+    
+    :param asset: رمز العملة (مثل BTC, USDT)
+    :return: رصيد العملة المتاح كرقم عشري
+    """
+    try:
+        account_data = get_account_balance()
+        if not account_data:
+            return 0
+        
+        for balance_data in account_data:
+            details = balance_data.get('details', [])
+            for coin in details:
+                if coin.get('ccy') == asset:
+                    return float(coin.get('availBal', 0))
+        
+        return 0
+    except Exception as e:
+        logger.error(f"خطأ في جلب رصيد {asset}: {e}")
+        return 0
+
+def get_ticker(symbol):
+    """
+    جلب معلومات سعر العملة الحالي
+    
+    :param symbol: رمز العملة بتنسيق OKX (مثل BTC-USDT)
+    :return: معلومات السعر الحالي
+    """
+    try:
+        endpoint = f"/market/ticker?instId={symbol}"
+        method = "GET"
+        request_path = API_VERSION + endpoint
+        
+        url = BASE_URL + request_path
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('code') == '0':
+                return data.get('data', [{}])[0]
+            else:
+                logger.error(f"خطأ في استجابة OKX: {data.get('msg')}")
+                return None
+        else:
+            logger.error(f"فشل طلب سعر العملة: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        logger.error(f"خطأ في جلب سعر {symbol}: {e}")
+        return None
+
+def get_current_price(symbol):
+    """
+    جلب السعر الحالي للعملة
+    
+    :param symbol: رمز العملة بتنسيق OKX (مثل BTC-USDT)
+    :return: السعر الحالي كرقم عشري
+    """
+    ticker = get_ticker(symbol)
+    if ticker:
+        return float(ticker.get('last', 0))
+    return None
+
+def get_klines(symbol, interval='15m', limit=100):
+    """
+    جلب بيانات الشموع (Candlestick)
+    
+    :param symbol: رمز العملة بتنسيق OKX (مثل BTC-USDT)
+    :param interval: الفاصل الزمني (1m, 3m, 5m, 15m, 30m, 1H, 2H, 4H, 6H, 12H, 1D, 1W, 1M)
+    :param limit: عدد الشموع (الحد الأقصى 100)
+    :return: قائمة من قواميس تحتوي على بيانات الشموع
+    """
+    try:
+        # تحويل الفاصل الزمني إلى صيغة OKX
+        interval_mapping = {
+            '1m': '1m',
+            '3m': '3m',
+            '5m': '5m',
+            '15m': '15m',
+            '30m': '30m',
+            '1h': '1H',
+            '2h': '2H',
+            '4h': '4H',
+            '6h': '6H',
+            '12h': '12H',
+            '1d': '1D',
+            '1w': '1W',
+            '1M': '1M'
+        }
+        
+        okx_interval = interval_mapping.get(interval, '15m')
+        
+        endpoint = f"/market/candles?instId={symbol}&bar={okx_interval}&limit={limit}"
+        method = "GET"
+        request_path = API_VERSION + endpoint
+        
+        url = BASE_URL + request_path
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('code') == '0':
+                # OKX format: [timestamp, open, high, low, close, vol, volCcy]
+                raw_candles = data.get('data', [])
+                
+                # تحويل البيانات إلى نفس التنسيق المستخدم في باقي التطبيق
+                formatted_candles = []
+                for candle in raw_candles:
+                    # التعامل مع الطابع الزمني بطريقة أكثر مرونة
+                    try:
+                        # محاولة تحليل التنسيق ISO
+                        if isinstance(candle[0], str) and 'T' in candle[0]:
+                            timestamp = int(time.mktime(time.strptime(candle[0], "%Y-%m-%dT%H:%M:%S.%fZ")) * 1000)
+                        # إذا كان الطابع الزمني عبارة عن رقم (timestamp)
+                        elif isinstance(candle[0], str) and candle[0].isdigit():
+                            # إذا كان بالمللي ثانية (13 رقم)
+                            if len(candle[0]) >= 13:
+                                timestamp = int(candle[0])
+                            # إذا كان بالثواني (10 أرقام)
+                            else:
+                                timestamp = int(candle[0]) * 1000
+                        else:
+                            # قيمة افتراضية للاختبار
+                            timestamp = int(time.time() * 1000)
+                            logger.warning(f"تنسيق طابع زمني غير معروف: {candle[0]}")
+                            
+                        formatted_candles.append({
+                            'open_time': timestamp,
+                            'open': float(candle[1]),
+                            'high': float(candle[2]),
+                            'low': float(candle[3]),
+                            'close': float(candle[4]),
+                            'volume': float(candle[5]),
+                            'close_time': timestamp + (get_interval_milliseconds(okx_interval) - 1)
+                        })
+                    except Exception as e:
+                        logger.error(f"خطأ في معالجة بيانات الشمعة: {e}, البيانات: {candle}")
+                
+                return formatted_candles
+            else:
+                logger.error(f"خطأ في استجابة OKX: {data.get('msg')}")
+                return []
+        else:
+            logger.error(f"فشل طلب بيانات الشموع: {response.status_code} - {response.text}")
+            return []
+    except Exception as e:
+        logger.error(f"خطأ في جلب بيانات الشموع لـ {symbol}: {e}")
+        return []
+
+def get_interval_milliseconds(interval):
+    """
+    تحويل الفاصل الزمني إلى مللي ثانية
+    
+    :param interval: الفاصل الزمني (1m, 3m, 5m, 15m, 30m, 1H, 2H, 4H, 6H, 12H, 1D, 1W, 1M)
+    :return: المدة بالمللي ثانية
+    """
+    interval_ms = {
+        '1m': 60 * 1000,
+        '3m': 3 * 60 * 1000,
+        '5m': 5 * 60 * 1000,
+        '15m': 15 * 60 * 1000,
+        '30m': 30 * 60 * 1000,
+        '1H': 60 * 60 * 1000,
+        '2H': 2 * 60 * 60 * 1000,
+        '4H': 4 * 60 * 60 * 1000,
+        '6H': 6 * 60 * 60 * 1000,
+        '12H': 12 * 60 * 60 * 1000,
+        '1D': 24 * 60 * 60 * 1000,
+        '1W': 7 * 24 * 60 * 60 * 1000,
+        '1M': 30 * 24 * 60 * 60 * 1000  # تقريبي
+    }
+    return interval_ms.get(interval, 15 * 60 * 1000)  # افتراضي 15 دقيقة
+
+def get_all_symbols_24h_data():
+    """
+    جلب بيانات 24 ساعة لجميع العملات المدعومة
+    
+    :return: قائمة بمعلومات العملات
+    """
+    try:
+        endpoint = "/market/tickers?instType=SPOT"
+        method = "GET"
+        request_path = API_VERSION + endpoint
+        
+        url = BASE_URL + request_path
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('code') == '0':
+                tickers = data.get('data', [])
+                
+                # تعديل البيانات لتتناسب مع تنسيق التطبيق
+                formatted_tickers = []
+                for ticker in tickers:
+                    symbol = ticker.get('instId')
+                    
+                    # تجاهل أزواج العملات غير USDT
+                    if not symbol.endswith('-USDT'):
+                        continue
+                    
+                    # استخراج رمز العملة الأساسية (بدون -USDT)
+                    base_asset = symbol.replace('-USDT', '')
+                    
+                    # حساب نسبة التغير
+                    last_price = float(ticker.get('last', 0))
+                    open_price = float(ticker.get('open24h', 0))
+                    if open_price > 0:
+                        price_change_pct = ((last_price - open_price) / open_price) * 100
+                    else:
+                        price_change_pct = 0
+                    
+                    # تحويل إلى تنسيق موحد
+                    formatted_ticker = {
+                        'symbol': base_asset + 'USDT',  # تعديل التنسيق ليتناسب مع بقية التطبيق
+                        'lastPrice': ticker.get('last', '0'),
+                        'priceChangePercent': str(price_change_pct),
+                        'quoteVolume': ticker.get('volCcy24h', '0'),  # حجم التداول بالعملة المقتبسة (USDT)
+                        'volume': ticker.get('vol24h', '0')  # حجم التداول بالعملة الأساسية
+                    }
+                    
+                    formatted_tickers.append(formatted_ticker)
+                
+                return formatted_tickers
+            else:
+                logger.error(f"خطأ في استجابة OKX: {data.get('msg')}")
+                return []
+        else:
+            logger.error(f"فشل طلب بيانات العملات: {response.status_code} - {response.text}")
+            return []
+    except Exception as e:
+        logger.error(f"خطأ في جلب بيانات العملات: {e}")
+        return []
+
+def place_order(symbol, side, quantity, price=None, order_type="market"):
+    """
+    إنشاء أمر شراء أو بيع
+    
+    :param symbol: رمز العملة (مثل BTC-USDT)
+    :param side: جانب الأمر (buy/sell)
+    :param quantity: الكمية
+    :param price: السعر (للأوامر المحددة)
+    :param order_type: نوع الأمر (market/limit)
+    :return: بيانات الأمر المنشأ
+    """
+    try:
+        endpoint = "/trade/order"
+        method = "POST"
+        request_path = API_VERSION + endpoint
+        
+        # تحويل side إلى تنسيق OKX
+        side_mapping = {"BUY": "buy", "SELL": "sell"}
+        okx_side = side_mapping.get(side.upper(), side.lower())
+        
+        # تحويل نوع الأمر إلى تنسيق OKX
+        order_type_mapping = {"MARKET": "market", "LIMIT": "limit"}
+        okx_order_type = order_type_mapping.get(order_type.upper(), order_type.lower())
+        
+        # إعداد بيانات الأمر
+        order_data = {
+            "instId": symbol,
+            "tdMode": "cash",  # نقدي (يستخدم الرصيد المتاح)
+            "side": okx_side,
+            "ordType": okx_order_type,
+            "sz": str(quantity)
+        }
+        
+        # إضافة السعر للأوامر المحددة
+        if okx_order_type == "limit" and price:
+            order_data["px"] = str(price)
+        
+        # تحويل البيانات إلى JSON
+        body = json.dumps(order_data)
+        
+        # إنشاء الترويسات مع التوقيع
+        headers = get_headers(method, request_path, body)
+        
+        # إرسال الطلب
+        url = BASE_URL + request_path
+        response = requests.post(url, headers=headers, data=body)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('code') == '0':
+                logger.info(f"تم إنشاء أمر {okx_side} بنجاح: {data}")
+                
+                # تحويل البيانات إلى تنسيق موحد
+                order_info = data.get('data', [{}])[0]
+                formatted_order = {
+                    'symbol': symbol,
+                    'orderId': order_info.get('ordId'),
+                    'status': 'NEW' if order_info.get('sCode') == '0' else 'REJECTED',
+                    'type': order_type.upper(),
+                    'side': side.upper(),
+                    'quantity': quantity,
+                    'price': price if price else get_current_price(symbol)
+                }
+                
+                return formatted_order
+            else:
+                logger.error(f"خطأ في إنشاء الأمر: {data.get('msg')}")
+                return None
+        else:
+            logger.error(f"فشل إنشاء الأمر: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        logger.error(f"خطأ في إنشاء الأمر: {e}")
+        return None
+
+def get_open_orders(symbol=None):
+    """
+    جلب قائمة الأوامر المفتوحة
+    
+    :param symbol: رمز العملة (اختياري)
+    :return: قائمة بالأوامر المفتوحة
+    """
+    try:
+        endpoint = "/trade/orders-pending"
+        if symbol:
+            endpoint += f"?instId={symbol}"
+        
+        method = "GET"
+        request_path = API_VERSION + endpoint
+        headers = get_headers(method, request_path)
+        
+        url = BASE_URL + request_path
+        logger.info(f"جلب الأوامر المفتوحة من OKX: URL={url}")
+        response = requests.get(url, headers=headers)
+        
+        if response.status_code == 200:
+            data = response.json()
+            logger.info(f"استجابة OKX: {data.get('code')}")
+            
+            if data.get('code') == '0':
+                orders = data.get('data', [])
+                logger.info(f"عدد الأوامر المفتوحة من OKX: {len(orders)}")
+                
+                # تحويل البيانات إلى تنسيق موحد
+                formatted_orders = []
+                for order in orders:
+                    symbol = order.get('instId')
+                    side = order.get('side').upper()
+                    qty = float(order.get('sz', 0))
+                    price = float(order.get('px', 0) or 0)  # استخدام 0 كقيمة افتراضية إذا كانت px غير موجودة
+                    order_id = order.get('ordId')
+                    
+                    formatted_order = {
+                        'symbol': symbol.replace('-', ''),  # تحويل BTC-USDT إلى BTCUSDT
+                        'orderId': order_id,
+                        'price': price,
+                        'origQty': qty,
+                        'executedQty': float(order.get('accFillSz', 0)),
+                        'side': side,
+                        'status': 'OPEN',
+                        'time': int(time.time() * 1000)  # الوقت الحالي كملي ثانية
+                    }
+                    
+                    formatted_orders.append(formatted_order)
+                
+                logger.info(f"تم تهيئة {len(formatted_orders)} أمر مفتوح بنجاح من OKX")
+                return formatted_orders
+            else:
+                logger.error(f"خطأ في استجابة OKX: {data.get('msg')}")
+                return []
+        else:
+            logger.error(f"فشل طلب الأوامر المفتوحة: {response.status_code} - {response.text}")
+            return []
+    except Exception as e:
+        logger.error(f"خطأ في جلب الأوامر المفتوحة: {e}")
+        import traceback
+        logger.error(f"تفاصيل الخطأ: {traceback.format_exc()}")
+        return []
+
+def cancel_order(symbol, order_id):
+    """
+    إلغاء أمر معين
+    
+    :param symbol: رمز العملة
+    :param order_id: معرف الأمر
+    :return: نتيجة الإلغاء
+    """
+    try:
+        endpoint = "/trade/cancel-order"
+        method = "POST"
+        request_path = API_VERSION + endpoint
+        
+        # إعداد بيانات الإلغاء
+        cancel_data = {
+            "instId": symbol,
+            "ordId": order_id
+        }
+        
+        # تحويل البيانات إلى JSON
+        body = json.dumps(cancel_data)
+        
+        # إنشاء الترويسات مع التوقيع
+        headers = get_headers(method, request_path, body)
+        
+        # إرسال الطلب
+        url = BASE_URL + request_path
+        response = requests.post(url, headers=headers, data=body)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('code') == '0':
+                logger.info(f"تم إلغاء الأمر بنجاح: {data}")
+                
+                # تحويل البيانات إلى تنسيق موحد
+                cancel_info = data.get('data', [{}])[0]
+                formatted_result = {
+                    'symbol': symbol,
+                    'orderId': order_id,
+                    'status': 'CANCELED' if cancel_info.get('sCode') == '0' else 'REJECT_CANCEL'
+                }
+                
+                return formatted_result
+            else:
+                logger.error(f"خطأ في إلغاء الأمر: {data.get('msg')}")
+                return None
+        else:
+            logger.error(f"فشل إلغاء الأمر: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        logger.error(f"خطأ في إلغاء الأمر: {e}")
+        return None
+
+def get_order_history(symbol=None, limit=100):
+    """
+    جلب سجل الأوامر المنفذة
+    
+    :param symbol: رمز العملة (اختياري)
+    :param limit: عدد النتائج (الحد الأقصى 100)
+    :return: قائمة بالأوامر المنفذة
+    """
+    try:
+        endpoint = "/trade/orders-history-archive" if int(limit) > 7 else "/trade/orders-history"
+        # إضافة المعاملات
+        if symbol:
+            endpoint += f"?instId={symbol}"
+        if limit:
+            endpoint += f"&limit={limit}" if '?' in endpoint else f"?limit={limit}"
+        
+        method = "GET"
+        request_path = API_VERSION + endpoint
+        headers = get_headers(method, request_path)
+        
+        url = BASE_URL + request_path
+        response = requests.get(url, headers=headers)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('code') == '0':
+                orders = data.get('data', [])
+                
+                # تحويل البيانات إلى تنسيق موحد
+                formatted_orders = []
+                for order in orders:
+                    symbol = order.get('instId')
+                    side = order.get('side').upper()
+                    qty = float(order.get('sz', 0))
+                    price = float(order.get('avgPx', 0))
+                    order_id = order.get('ordId')
+                    
+                    formatted_order = {
+                        'symbol': symbol.replace('-', ''),  # تحويل BTC-USDT إلى BTCUSDT
+                        'orderId': order_id,
+                        'price': price,
+                        'origQty': qty,
+                        'executedQty': float(order.get('accFillSz', 0)),
+                        'side': side,
+                        'status': 'FILLED' if order.get('state') == 'filled' else order.get('state').upper(),
+                        'time': int(order.get('cTime', time.time() * 1000))
+                    }
+                    
+                    formatted_orders.append(formatted_order)
+                
+                return formatted_orders
+            else:
+                logger.error(f"خطأ في استجابة OKX: {data.get('msg')}")
+                return []
+        else:
+            logger.error(f"فشل طلب سجل الأوامر: {response.status_code} - {response.text}")
+            return []
+    except Exception as e:
+        logger.error(f"خطأ في جلب سجل الأوامر: {e}")
+        return []
+
+def convert_mexc_symbol_to_okx(mexc_symbol):
+    """
+    تحويل رمز العملة من تنسيق MEXC إلى تنسيق OKX
+    
+    :param mexc_symbol: رمز العملة بتنسيق MEXC (مثل BTCUSDT)
+    :return: رمز العملة بتنسيق OKX (مثل BTC-USDT)
+    """
+    if 'USDT' in mexc_symbol:
+        base_asset = mexc_symbol.replace('USDT', '')
+        return f"{base_asset}-USDT"
+    return mexc_symbol
+
+def convert_okx_symbol_to_mexc(okx_symbol):
+    """
+    تحويل رمز العملة من تنسيق OKX إلى تنسيق MEXC
+    
+    :param okx_symbol: رمز العملة بتنسيق OKX (مثل BTC-USDT)
+    :return: رمز العملة بتنسيق MEXC (مثل BTCUSDT)
+    """
+    return okx_symbol.replace('-', '')
